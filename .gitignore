@@ -6,9 +6,19 @@ npm-debug.*
 *.p8
 *.p12
 *.key
+*.log
 *.mobileprovision
 *.orig.*
 web-build/
+
+# Yarn
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 # macOS
 .DS_Store
