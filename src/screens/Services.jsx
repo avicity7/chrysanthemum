@@ -5,10 +5,10 @@ import Button from "../components/Button";
 const Services = () => {
     return (
     <View style={globalStyles.container}>
-        <Button customStyle={{marginBottom: 8}} title={"Triage"} onPress={() => {/* TODO: Add functionality */}} />
+        <Button icon="sort" customStyle={{marginBottom: 8}} title={"Triage"} onPress={() => {/* TODO: Add functionality */}} />
         <View style={style.split}>
-            <Button customStyle={[style.occupy, {marginRight: 8}]} title={"Update Records"} onPress={() => {/* TODO: Add functionality */}} />
-            <Button customStyle={[style.occupy, {marginLeft: 8}]} title={"View Records"} onPress={() => {/* TODO: Add functionality */}} />
+            <Button icon="archive-edit" customStyle={[style.occupy, {marginRight: 8}]} title={"Update Records"} onPress={() => {/* TODO: Add functionality */}} />
+            <Button icon="archive-search" customStyle={[style.occupy, {marginLeft: 8}]} title={"View Records"} onPress={() => {/* TODO: Add functionality */}} />
         </View>
     </View>)
 }
