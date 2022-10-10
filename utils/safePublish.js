@@ -1,6 +1,10 @@
 const Web3 = require("web3");
 const https = require("https");
+var CryptoJS = require("crypto-js");
+var MersenneTwister = require('mersenne-twister');
+var generator = new MersenneTwister();
 require('dotenv').config();
+
 const abi = [
 	{
 		"inputs": [],
@@ -29,10 +33,26 @@ const abi = [
 		"type": "function"
 	}
 ]
-
 const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
 const walletAddress = '0x41C806a5e3e81170c9144C9Ce0334e0297241Ce4';
 const contractAddress = "0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8";
+var secretKey = "";
+var data = "";
+
+function generateSecretKey() {
+	var secretKey = "";
+	for (var x = 0; x < 32; x++) {
+		secretKey += String.fromCharCode(generator.random() * (126 - 33) + 33);
+	}
+	return secretKey
+}
+
+function encryptData(data) {
+	secretKey = generateSecretKey();
+	data = CryptoJS.AES.encrypt(data,secretKey);
+	
+	return data.toString()
+}
 
 async function send (data,address) {
     var userContract = new web3.eth.Contract(abi,address);
@@ -49,7 +69,7 @@ function removeTransactionHeaders(result) {
 	var temp = "0x";
 	for (var x = 138; x<result.length; x++){
 		temp += result[x]
-	}	
+	}
 		
 	return temp
 }
@@ -87,7 +107,15 @@ module.exports = {
     retrieve,
 };
 
-getTransactionHistory();
+//Encrypting + Decrypting Data
+/*
+data = encryptData("test")
+console.log(data);
+console.log(secretKey);
+console.log(CryptoJS.AES.decrypt(data,secretKey).toString(CryptoJS.enc.Utf8));
+/*
+
+//console.log(CryptoJS.AES.decrypt(data, secretKey));
 // Editing user data 
 //send("testString3","0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
 
