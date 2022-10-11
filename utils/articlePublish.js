@@ -9,7 +9,7 @@ function parseArticle(article) {
     return output
 }
 
-function pushArticle(topic,header,author,bio,discipline,body){
+function pushArticle(topic,header,author,bio,body){
     var articleNumber = 1;
     let transactionHistory = getTransactionHistory(articleAddress);
     transactionHistory.then(function(result) {
@@ -20,10 +20,10 @@ function pushArticle(topic,header,author,bio,discipline,body){
                 break
             }
         }
-        send(topic+"^"+articleNumber+"^"+header+"^"+author+"^"+bio+"^"+discipline+"^"+body,articleAddress)
+        send(topic+"^"+articleNumber+"^"+header+"^"+author+"^"+bio+"^"+body,articleAddress)
     });
     return
 }
 
-//pushArticle("test","test3","test3","test3","test3","test3");
+//pushArticle("test","test3","test3","test3","test3");
 
