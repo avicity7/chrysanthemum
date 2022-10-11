@@ -75,7 +75,6 @@ function removeTransactionHeaders(result) {
 }
 
 
-
 function getTransactionHistory(wallet) {
 	let url = "https://api-testnet.bscscan.com/api?module=account&action=txlist&address=0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=YourApiKeyToken";
 	https.get(url,(res) => {
@@ -105,15 +104,19 @@ function getTransactionHistory(wallet) {
 module.exports = {
     send,
     retrieve,
+	encryptData,
+	getTransactionHistory,
 };
+
+
 
 //Encrypting + Decrypting Data
 /*
-data = encryptData("test")
+data = encryptData("hey does this keep spaces?")
 console.log(data);
 console.log(secretKey);
 console.log(CryptoJS.AES.decrypt(data,secretKey).toString(CryptoJS.enc.Utf8));
-/*
+*/
 
 //console.log(CryptoJS.AES.decrypt(data, secretKey));
 // Editing user data 
@@ -130,7 +133,7 @@ userData.then(function(result) {
 
 //Getting data from this file
 /*
-import { send, retrieve } from './backend/safePublish';
+import { send, retrieve } from './utils/safePublish';
 import {useState} from 'react';
 
 const [userDataRetrieved, setUserData] = useState("");
