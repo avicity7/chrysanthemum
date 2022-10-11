@@ -1,14 +1,24 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { send, retrieve } from './utils/safePublish';
+import {useState} from 'react';
 
-export default function App() {
+function App() {
+  const [userDataRetrieved, setUserData] = useState("");
+  let userData = retrieve("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
+
+  userData.then(function(result) {
+      setUserData(result);
+  })
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style = {styles.container}>
+      <Text>{userDataRetrieved}</Text>
     </View>
   );
 }
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
@@ -18,3 +28,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
