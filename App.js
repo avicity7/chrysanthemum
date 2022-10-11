@@ -1,31 +1,43 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { send, retrieve } from './utils/safePublish';
-import {useState} from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Home from "./src/screens/Home"
+import Services from "./src/screens/Services"
+import Articles from "./src/screens/Articles"
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
 
-function App() {
-  const [userDataRetrieved, setUserData] = useState("");
-  let userData = retrieve("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
+const Tab = createBottomTabNavigator()
 
-  userData.then(function(result) {
-      setUserData(result);
-  })
-
+export default function App() {
   return (
-    <View style = {styles.container}>
-      <Text>{userDataRetrieved}</Text>
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator screenOptions={({route}) => ({
+        tabBarIcon: ({color, size}) => {
+          let iconName;
+
+          if (route.name === "Home") {
+            iconName = "home"
+          } else if (route.name === "Services") {
+            iconName = "pill"
+          } else if (route.name === "Articles") {
+            iconName = "post"
+          }
+
+          return <MaterialCommunityIcons name={iconName} size={size} color={color} />
+        }
+      })}>
+        <Tab.Screen name="Home" component={Home}></Tab.Screen>
+        <Tab.Screen name="Services" component={Services}></Tab.Screen>
+        <Tab.Screen name="Articles" component={Articles}></Tab.Screen>
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
-export default App;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+// });
