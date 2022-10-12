@@ -116,9 +116,16 @@ console.log(secretKey);
 console.log(CryptoJS.AES.decrypt(data,secretKey).toString(CryptoJS.enc.Utf8));
 */
 
-//console.log(CryptoJS.AES.decrypt(data, secretKey));
+
 // Editing user data 
 //send("testString4","0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
 
 
-//Getting data from this file
+//Getting data from user/contract
+/*
+str = getTransactionHistory(address);
+
+str.then(function(result) {
+    console.log(result);
+});
+*/
