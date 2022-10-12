@@ -57,7 +57,7 @@ function encryptData(data) {
 async function send (data,address) {
     var userContract = new web3.eth.Contract(abi,address);
     web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
-    return await userContract.methods.store(data).send({from: walletAddress, gas: 1000000})
+    return await userContract.methods.store(data).send({from: walletAddress, gas: 2000000})
 }
 
 function removeTransactionHeaders(result) {

@@ -1,5 +1,6 @@
 const {send, getTransactionHistory} = require("./safePublish");
-const articleAddress = "0x305DCFACF0CF1fd5ba800677C818aE3730208De7";
+var lzstring = require('lz-string');
+const articleAddress = "0xB69d024d1DCc50d3019Fd939746b565873009AEC";
 var data;
 function parseArticle(article) {
     var output = [];
@@ -25,5 +26,10 @@ function pushArticle(topic,header,author,bio,body){
     return
 }
 
-//pushArticle("test","test3","test3","test3","test3");
+//pushArticle("Psychiatry","Anxiety Disorders","Dr. Park Jun Seo","Bachelor of Medicine, Bachelor of Surgery, Master of Medicine, Fellow of the Royal Australasian College of Physicians, Fellow of the Royal College of Physicians,  Fellow of the Academy of Medicine","Anxiety disorders, such as general anxiety disorder, panic disorder, obsessive compulsive disorder, and social anxiety, are characterised by instrusive thoughts that cause sustained and inprompted distress, and can be accompanied by a host of psychosomatic and physiological symptoms.\n\nIn general, anxiety disorder differ from normal, neutrotypical bouts of anxiety when it is persistant, uncontrollable, severe. and incessant to an abnormal degree, such that it is unmanageable and overwhelming, which can hamper one's daily function and day-to-day activities. While normal anxiety can sometimes be a good thing, anxiety disorders are oftentimes detrimental to one's mental and physical health.\n\nIf you find yourself in a constant and prolonged state of anxiety, unable to sleep or rest at night, exceptionally irritable, or having periods of panic, it is recommended that you pay your doctor or a psychiatrist a visit to consider your options.");
 
+str = getTransactionHistory(articleAddress);
+
+str.then(function(result) {
+    console.log(result);
+});
