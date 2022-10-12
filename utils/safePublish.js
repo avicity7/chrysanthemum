@@ -104,6 +104,7 @@ module.exports = {
     send,
 	encryptData,
 	getTransactionHistory,
+	removeTransactionHeaders
 };
 
 
