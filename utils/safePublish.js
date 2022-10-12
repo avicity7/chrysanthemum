@@ -57,12 +57,7 @@ function encryptData(data) {
 async function send (data,address) {
     var userContract = new web3.eth.Contract(abi,address);
     web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
-    return await userContract.methods.store(data).send({from: walletAddress, gas: 1000000})
-}
-
-async function retrieve(address) {
-    var userContract =  new web3.eth.Contract(abi,address);
-    return await userContract.methods.retrieve().call()
+    return await userContract.methods.store(data).send({from: walletAddress, gas: 2000000})
 }
 
 function removeTransactionHeaders(result) {
@@ -75,35 +70,38 @@ function removeTransactionHeaders(result) {
 }
 
 
-function getTransactionHistory(wallet) {
-	let url = "https://api-testnet.bscscan.com/api?module=account&action=txlist&address=0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=YourApiKeyToken";
-	https.get(url,(res) => {
-		let body = "";
-	
-		res.on("data", (chunk) => {
-			body += chunk;
-		});
-	
-		res.on("end", () => {
-			try {
-				let json = JSON.parse(body);
-				for (var tx = json.result.length - 1; tx > 0; tx--) {
-					console.log(Web3.utils.toUtf8(removeTransactionHeaders(json.result[tx].input)));
-				}
-			} catch (error) {
-				console.error(error.message);
-			};
-		});
-	
-	}).on("error", (error) => {
-		console.error(error.message);
-	});
+async function getTransactionHistory(wallet) {
+	let url = "https://api-testnet.bscscan.com/api?module=account&action=txlist&address="+wallet+"&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=YourApiKeyToken";
+	return new Promise((resolve) => {
+		var temp = [];
+		https.get(url,(res) => {
+			let body = "";
+		
+			res.on("data", (chunk) => {
+				body += chunk;
+			});
+		
+			res.on("end", () => {
+				try {
+					let json = JSON.parse(body);
+					for (var tx = json.result.length - 1; tx > 0; tx--) {
+						temp.push(Web3.utils.toUtf8(removeTransactionHeaders(json.result[tx].input)));
+					}
+				} catch (error) {
+					console.error(error.message);
+				};
 
+				resolve(temp)
+			});
+		
+		}).on("error", (error) => {
+			console.error(error.message);
+		});
+	});
 }
 
 module.exports = {
     send,
-    retrieve,
 	encryptData,
 	getTransactionHistory,
 };
@@ -118,34 +116,16 @@ console.log(secretKey);
 console.log(CryptoJS.AES.decrypt(data,secretKey).toString(CryptoJS.enc.Utf8));
 */
 
-//console.log(CryptoJS.AES.decrypt(data, secretKey));
+
 // Editing user data 
-//send("testString3","0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
+//send("testString4","0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
 
-// Retrieving user data 
+
+//Getting data from user/contract
 /*
-let userData = retrieve("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
+str = getTransactionHistory(address);
 
-userData.then(function(result) {
-    console.log(result)
-})
-*/
-
-//Getting data from this file
-/*
-import { send, retrieve } from './utils/safePublish';
-import {useState} from 'react';
-
-const [userDataRetrieved, setUserData] = useState("");
-  let userData = retrieve("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
-
-  userData.then(function(result) {
-      setUserData(result);
-  })
-
-  return (
-    <View style = {styles.container}>
-      <Text>{userDataRetrieved}</Text>
-    </View>
-  );
+str.then(function(result) {
+    console.log(result);
+});
 */
