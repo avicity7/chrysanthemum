@@ -19,7 +19,7 @@ app.post("/safePublish/getTransactions", async (req, res) => {
     try {
       let transactions = getTransactionHistory(userAddress);
       transactions.then(function(result){
-        res.end(JSON.stringify({ transactions: transactions }));
+        res.end(JSON.stringify({ transactions: result }));
       })
     } catch {
       res.sendStatus(400).end();
