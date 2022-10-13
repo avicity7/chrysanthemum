@@ -75,9 +75,9 @@ async function sendTriage (address) {
 }
 
 async function getDeviceData () {
-	const bpm = generator.random() * (140 - 70) + 70;
-	const temp = (generator.random() * (37 - 36) + 70) + "." + (generator.random() * (9 - 1) + 1);
-	const sp02 = (generator.random() * (100 - 95) + 95)+"%";
+	const bpm = Math.ceil(generator.random() * (140 - 70) + 70);
+	const temp = Math.ceil(generator.random() * (37 - 36) + 70) + "." + (generator.random() * (9 - 1) + 1);
+	const sp02 = Math.ceil(generator.random() * (100 - 95) + 95)+"%";
 	return bpm+"^"+temp+"^"+sp02
 }
 
