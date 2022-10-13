@@ -51,13 +51,27 @@ function encryptData(data) {
 	secretKey = generateSecretKey();
 	data = CryptoJS.AES.encrypt(data,secretKey);
 	
-	return data.toString()
+	return [data.toString(),secretKey]
 }
 
 async function send (data,address) {
     var userContract = new web3.eth.Contract(abi,address);
     web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
     return await userContract.methods.store(data).send({from: walletAddress, gas: 2000000})
+}
+
+async function sendTriage (address) {
+	const bpm = generator.random() * (140 - 70) + 70;
+	const temp = (generator.random() * (37 - 36) + 70) + "." + (generator.random() * (9 - 1) + 1);
+	const sp02 = (generator.random() * (100 - 95) + 95)+"%";
+	return new Promise((resolve) => {
+		let encrypted = encryptData(bpm+"^"+temp+"^"+sp02);
+		let key = send (encrypted[0],address)
+		key.then(function() {
+			console.log(encrypted[1]+"safePublish.js");
+			resolve(encrypted[1])
+	});
+	})
 }
 
 function removeTransactionHeaders(result) {
@@ -104,7 +118,8 @@ module.exports = {
     send,
 	encryptData,
 	getTransactionHistory,
-	removeTransactionHeaders
+	removeTransactionHeaders,
+	sendTriage
 };
 
 
