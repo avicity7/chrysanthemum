@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const {send, getTransactionHistory} = require("./safePublish");
+const {sendTriage, getTransactionHistory} = require("./safePublish");
 
 app.use(express.json());
 app.use(cors());
@@ -10,9 +10,15 @@ app.get("/", (req, res) => {
     res.sendStatus(200).end();
 });
 
-app.post("/safePublish/send", (req, res) => {
+app.post("/safePublish/sendTriage", (req, res) => {
+  console.log("sendTriage received")
   const userAddress = req.body.userAddress;
-  res.sendStatus(200).end();
+  res.setHeader("Content-Type", "application/json");
+  let key = sendTriage(userAddress);
+  key.then(function(result){
+    console.log(result)
+    res.end(JSON.stringify({ key: result }));
+  })
 });
 
 app.post("/safePublish/getTransactions", async (req, res) => {
@@ -24,7 +30,7 @@ app.post("/safePublish/getTransactions", async (req, res) => {
     try {
       let transactions = getTransactionHistory(userAddress);
       transactions.then(function(result){
-        res.end(JSON.stringify({ transactions: transactions }));
+        res.end(JSON.stringify({ transactions: result }));
       })
     } catch {
       res.sendStatus(400).end();
