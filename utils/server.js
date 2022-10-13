@@ -10,6 +10,11 @@ app.get("/", (req, res) => {
     res.sendStatus(200).end();
 });
 
+app.post("/safePublish/send", (req, res) => {
+  const userAddress = req.body.userAddress;
+  res.sendStatus(200).end();
+});
+
 app.post("/safePublish/getTransactions", async (req, res) => {
     const userAddress = req.body.userAddress;
     res.setHeader("Content-Type", "application/json");
@@ -19,16 +24,15 @@ app.post("/safePublish/getTransactions", async (req, res) => {
     try {
       let transactions = getTransactionHistory(userAddress);
       transactions.then(function(result){
-        res.end(JSON.stringify({ transactions: result }));
+        res.end(JSON.stringify({ transactions: transactions }));
       })
     } catch {
       res.sendStatus(400).end();
     }
-});
+})
 
 
 const port = 5000;
 app.listen(port, () => {
     console.debug(`Express is running on port ${port}.`);
 });
-
