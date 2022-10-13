@@ -43,9 +43,11 @@ const Services = () => {
 
     return (
     <View style={globalStyles.container}>
-        <Button icon="sort" customStyle={{marginBottom: 8}} title={"Triage"} onPress={() => {
-            sendTriage("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",setData);
-        }} />
+        <View style = {style.single}>
+            <Button icon="sort" customStyle={{flexGrow:1}} title={"Triage"} onPress={() => {
+                sendTriage("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",setData);
+            }} />
+        </View>
         <View style={style.split}>
             <Button icon="archive-edit" customStyle={[style.occupy, {marginRight: 8}]} title={"Update Records"} onPress={() => {/* TODO: Add functionality */}} />
             <Button icon="archive-search" customStyle={[style.occupy, {marginLeft: 8}]} title={"View Records"} onPress={() => {getTransactions("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",setData)}} />
@@ -62,6 +64,11 @@ const style = StyleSheet.create({
     },
     occupy: {
         flexGrow: 1,
+    },
+    single: {
+        marginBottom: 8,
+        display:"flex",
+        flexDirection:"row"
     }
 })
 

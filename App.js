@@ -4,10 +4,20 @@ import Home from "./src/screens/Home"
 import Services from "./src/screens/Services"
 import Articles from "./src/screens/Articles"
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
+import { useFonts } from 'expo-font';
 
 const Tab = createBottomTabNavigator()
 
 export default function App() {
+
+  const [loaded] = useFonts({
+    NotoSerifJPRegular: require('./assets/NotoSerifJP-Regular.otf'),
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={({route}) => ({
@@ -23,8 +33,20 @@ export default function App() {
           }
 
           return <MaterialCommunityIcons name={iconName} size={size} color={color} />
+        },
+        headerTitleAlign: "center",
+        tabBarActiveTintColor:"#C383F4",
+        tabBarItemStyle: {
+          fontFamily: "NotoSerifJPRegular"
         }
-      })}>
+    
+        
+      })
+      
+      
+      }
+      
+      >
         <Tab.Screen name="Home" component={Home}></Tab.Screen>
         <Tab.Screen name="Services" component={Services}></Tab.Screen>
         <Tab.Screen name="Articles" component={Articles}></Tab.Screen>

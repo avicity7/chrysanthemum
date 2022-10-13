@@ -5,7 +5,10 @@ const globalStyles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "white",
-        padding: 32
+        padding: 32,
+        margin: 'auto',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 
