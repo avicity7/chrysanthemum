@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
-    res.sendStatus(200);
+    res.sendStatus(200).end();
 });
 
 app.post("/safePublish/getTransactions", async (req, res) => {
