@@ -12,6 +12,8 @@ export default function App() {
 
   const [loaded] = useFonts({
     NotoSerifJPRegular: require('./assets/NotoSerifJP-Regular.otf'),
+    NotoSerifJPSemiBold: require('./assets/NotoSerifJP-SemiBold.otf'),
+    NotoSerifJPBold: require('./assets/NotoSerifJP-Bold.otf')
   });
 
   if (!loaded) {
@@ -32,19 +34,29 @@ export default function App() {
             iconName = "post"
           }
 
-          return <MaterialCommunityIcons name={iconName} size={size} color={color} />
+          return <MaterialCommunityIcons name={iconName} size={30} color={color}  style = {{height:30}}/>
         },
         headerTitleAlign: "center",
         tabBarActiveTintColor:"#C383F4",
-        tabBarItemStyle: {
-          fontFamily: "NotoSerifJPRegular"
-        }
-    
+        tabBarStyle: {
+          borderTopWidth: 0,
+          elevation: 0,
+          marginBottom:10
+        },
+        tabBarLabelStyle: {
+          fontFamily: "NotoSerifJPRegular",
+          fontSize:12
+        },
+        headerTitleStyle: {
+          fontFamily: "NotoSerifJPBold",
+        },
+        
         
       })
       
       
       }
+
       
       >
         <Tab.Screen name="Home" component={Home}></Tab.Screen>

@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { useState } from "react";
 import globalStyles from "../styles/global";
 import Button from "../components/Button";
+import { useFonts } from 'expo-font';
 
 const getTransactions = async (wallet,setData)=>{
     const apiURL = 'http://13.212.100.69:5000';
@@ -40,6 +41,15 @@ const sendTriage = async (wallet,setData)=>{
 
 const Services = () => {
     const [userData,setData] = useState("test");
+    const [loaded] = useFonts({
+        NotoSerifJPRegular: require('../../assets/NotoSerifJP-Regular.otf'),
+        NotoSerifJPSemiBold: require('../../assets/NotoSerifJP-SemiBold.otf'),
+        NotoSerifJPBold: require('../../assets/NotoSerifJP-Bold.otf')
+    });
+
+    if (!loaded) {
+        return null;
+    }
 
     return (
     <View style={globalStyles.container}>
