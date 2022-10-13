@@ -61,9 +61,9 @@ async function send (data,address) {
 }
 
 async function sendTriage (address) {
-	const bpm = generator.random() * (140 - 70) + 70;
-	const temp = (generator.random() * (37 - 36) + 70) + "." + (generator.random() * (9 - 1) + 1);
-	const sp02 = (generator.random() * (100 - 95) + 95)+"%";
+	const bpm = Math.ceil(generator.random() * (140 - 70) + 70);
+	const temp = Math.floor(generator.random() * (38 - 36) + 36) + "." + Math.ceil(generator.random() * (9 - 1) + 1);
+	const sp02 = Math.ceil(generator.random() * (100 - 95) + 95)+"%";
 	return new Promise((resolve) => {
 		let encrypted = encryptData(bpm+"^"+temp+"^"+sp02);
 		let key = send (encrypted[0],address)
@@ -72,6 +72,13 @@ async function sendTriage (address) {
 			resolve(encrypted[1])
 	});
 	})
+}
+
+async function getDeviceData () {
+	const bpm = Math.ceil(generator.random() * (140 - 70) + 70);
+	const temp = Math.floor(generator.random() * (38 - 36) + 36) + "." + Math.ceil(generator.random() * (9 - 1) + 1);
+	const sp02 = Math.ceil(generator.random() * (100 - 95) + 95)+"%";
+	return bpm+"^"+temp+"^"+sp02
 }
 
 function removeTransactionHeaders(result) {
@@ -119,7 +126,8 @@ module.exports = {
 	encryptData,
 	getTransactionHistory,
 	removeTransactionHeaders,
-	sendTriage
+	sendTriage, 
+	getDeviceData
 };
 
 

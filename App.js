@@ -49,6 +49,7 @@ export default function App() {
         headerTitleStyle: {
           fontFamily: "NotoSerifJPBold",
         },
+        headerShown:false
         
       })
       

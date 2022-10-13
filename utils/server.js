@@ -1,13 +1,23 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const {sendTriage, getTransactionHistory} = require("./safePublish");
+const {sendTriage, getTransactionHistory, getDeviceData} = require("./safePublish");
 
 app.use(express.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
     res.sendStatus(200).end();
+});
+
+app.get("/getDeviceData", (req, res) => {
+  console.log("getDeviceData received")
+  res.setHeader("Content-Type", "application/json");
+  let key = getDeviceData();
+  key.then(function(result){
+    console.log(result)
+    res.end(JSON.stringify({ stats: result }));
+  })
 });
 
 app.post("/safePublish/sendTriage", (req, res) => {
