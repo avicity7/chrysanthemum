@@ -1,7 +1,18 @@
 import { Pressable, Text, StyleSheet } from "react-native"
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
+import { useFonts } from 'expo-font';
 
 const Button = ({ customStyle, icon, title, onPress }) => {
+    const [loaded] = useFonts({
+        NotoSerifJPRegular: require('../../assets/NotoSerifJP-Regular.otf'),
+        NotoSerifJPSemiBold: require('../../assets/NotoSerifJP-SemiBold.otf'),
+        NotoSerifJPBold: require('../../assets/NotoSerifJP-Bold.otf')
+    });
+
+    if (!loaded) {
+        return null;
+    }
+
     return (
     <Pressable style={({pressed}) => ([style.container, pressed ? style.containerPressed : style.containerUnpressed, customStyle])} android_ripple={true} onPress={onPress}>
         {icon && <MaterialCommunityIcons name={icon} size={24} color="black" style={style.icon} />}
@@ -12,7 +23,7 @@ const Button = ({ customStyle, icon, title, onPress }) => {
 
 const style = StyleSheet.create({
     container: {
-        backgroundColor: "#E5E5E5",
+        backgroundColor: "#F5F5F5",
         paddingVertical: 16,
         display: "flex",
         flexDirection: "row",
@@ -30,7 +41,7 @@ const style = StyleSheet.create({
         opacity: 0.5
     },
     title: {
-        fontWeight: "bold"
+        fontFamily: "NotoSerifJPSemiBold"
     }
 })
 
