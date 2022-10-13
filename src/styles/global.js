@@ -9,6 +9,12 @@ const globalStyles = StyleSheet.create({
         margin: 'auto',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    deviceContainer: {
+        flex: 1,
+        backgroundColor: "white",
+        padding: 8,
+        alignItems: 'center'
     }
 })
 

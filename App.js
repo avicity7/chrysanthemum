@@ -41,7 +41,6 @@ export default function App() {
         tabBarStyle: {
           borderTopWidth: 0,
           elevation: 0,
-          marginBottom:10
         },
         tabBarLabelStyle: {
           fontFamily: "NotoSerifJPRegular",
@@ -50,7 +49,6 @@ export default function App() {
         headerTitleStyle: {
           fontFamily: "NotoSerifJPBold",
         },
-        
         
       })
       
