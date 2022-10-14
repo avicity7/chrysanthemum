@@ -20,7 +20,6 @@ const Articles = () => {
 
     return (
         <View style={style.header}>
-            <View style = {{flexDirection:'row'}}></View>
             <Text style = {{fontFamily: "NotoSerifJPSemiBold",fontSize:32,marginTop:50,marginBottom:0}}>Articles</Text>
             <View style = {globalStyles.container}>
                 <Text>{userData}</Text>

@@ -23,7 +23,7 @@ const Button = ({ customStyle, icon, title, onPress }) => {
 
 const style = StyleSheet.create({
     container: {
-        backgroundColor: "#F5F5F5",
+        backgroundColor: "#F9F9F9",
         paddingVertical: 16,
         display: "flex",
         flexDirection: "row",
