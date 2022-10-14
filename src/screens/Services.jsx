@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
-import { useState } from "react";
-import globalStyles from "../styles/global";
-import Button from "../components/Button";
 import { useFonts } from 'expo-font';
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import QRCode from 'react-native-qrcode-svg';
+import Button from "../components/Button";
+import globalStyles from "../styles/global";
 
 const getTransactions = async (wallet,setData)=>{
     const apiURL = 'http://13.212.100.69:5000';
@@ -62,7 +63,7 @@ const Services = () => {
             <Button icon="archive-edit" customStyle={[style.occupy, {marginRight: 8}]} title={"Update Records"} onPress={() => {/* TODO: Add functionality */}} />
             <Button icon="archive-search" customStyle={[style.occupy, {marginLeft: 8}]} title={"View Records"} onPress={() => {getTransactions("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",setData)}} />
         </View>
-        <Text>{userData}</Text>
+        {userData !== "test" ? <QRCode value={userData} size={200} /> : <Text>{userData}</Text>}
     </View>)
 }
 
@@ -70,7 +71,8 @@ const style = StyleSheet.create({
     split: {
         display: "flex",
         flexDirection: "row",
-        marginTop: 8
+        marginTop: 8,
+        marginBottom: 16
     },
     occupy: {
         flexGrow: 1,
