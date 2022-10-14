@@ -3,17 +3,7 @@ import { useFonts } from "expo-font";
 import { Pressable, StyleSheet, Text } from "react-native";
 import globalStyles from "../styles/global";
 
-const Button = ({ style: customStyle, icon, title, onPress }) => {
-  const [loaded] = useFonts({
-    NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
-    NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
-    NotoSerifJPBold: require("../../assets/NotoSerifJP-Bold.otf"),
-  });
-
-  if (!loaded) {
-    return null;
-  }
-
+const Button = ({ customStyle, icon, title, onPress }) => {
   return (
     <Pressable
       style={({ pressed }) => [

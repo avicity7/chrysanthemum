@@ -96,16 +96,6 @@ const ArticleDetailView = ({ route }) => {
 const ArticlesView = ({ navigation }) => {
   const [userData, setData] = useState("Refresh Data");
 
-  const [loaded] = useFonts({
-    NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
-    NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
-    NotoSerifJPBold: require("../../assets/NotoSerifJP-Bold.otf"),
-  });
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <View style={style.header}>
       <Text
@@ -189,16 +179,6 @@ const ArticlesView = ({ navigation }) => {
 const Stack = createNativeStackNavigator();
 
 const Articles = () => {
-  const [loaded] = useFonts({
-    NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
-    NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
-    NotoSerifJPBold: require("../../assets/NotoSerifJP-Bold.otf"),
-  });
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName="ServicesScreen">

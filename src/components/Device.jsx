@@ -3,16 +3,6 @@ import { useFonts } from "expo-font";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 const Device = ({ customStyle, icon, title, onPress, data }) => {
-  const [loaded] = useFonts({
-    NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
-    NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
-    NotoSerifJPBold: require("../../assets/NotoSerifJP-Bold.otf"),
-  });
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <Pressable
       style={({ pressed }) => [

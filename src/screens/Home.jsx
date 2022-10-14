@@ -23,16 +23,6 @@ const Home = () => {
   const [bpm] = useState(userData.split("^")[1]);
   const [sp02] = useState(userData.split("^")[2]);
 
-  const [loaded] = useFonts({
-    NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
-    NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
-    NotoSerifJPBold: require("../../assets/NotoSerifJP-Bold.otf"),
-  });
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <View style={style.greeting}>
       <Text
