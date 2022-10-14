@@ -4,6 +4,9 @@ import { StyleSheet, Text, View, Modal,Pressable } from "react-native";
 import QRCode from 'react-native-qrcode-svg';
 import Button from "../components/Button";
 import globalStyles from "../styles/global";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 
 const getTransactions = async (wallet,setData,setModalVisible,modalVisible)=>{
     const apiURL = 'http://13.212.100.69:5000';
@@ -41,8 +44,16 @@ const sendTriage = async (wallet,setData,setModalVisible,modalVisible)=>{
     }))
 }
 
+const HealthRecords = () => {
+    return (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style = {{fontFamily: "NotoSerifJPSemiBold"}}>Health Records</Text>
+        </View>
+    );
+}
 
-const Services = () => {
+
+const ServicesScreen = ({navigation}) => {
     const [userData,setData] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
     const [loaded] = useFonts({
@@ -88,11 +99,34 @@ const Services = () => {
             </View>
             <View style={style.split}>
                 <Button icon="archive-edit" customStyle={[style.occupy, {marginRight: 8}]} title={"Update Records"} onPress={() => {/* TODO: Add functionality */}} />
-                <Button icon="archive-search" customStyle={[style.occupy, {marginLeft: 8}]} title={"View Records"} onPress={() => {getTransactions("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",setData)}} />
+                <Button icon="archive-search" customStyle={[style.occupy, {marginLeft: 8}]} title={"View Records"} onPress={() => {navigation.navigate("Health Records")}} />
             </View>
             </View>
     </View>
     )
+}
+
+const Stack = createNativeStackNavigator();
+
+const Services = () => {
+    const [loaded] = useFonts({
+        NotoSerifJPRegular: require('../../assets/NotoSerifJP-Regular.otf'),
+        NotoSerifJPSemiBold: require('../../assets/NotoSerifJP-SemiBold.otf'),
+        NotoSerifJPBold: require('../../assets/NotoSerifJP-Bold.otf')
+    });
+
+    if (!loaded) {
+        return null;
+    }
+
+    return (
+        <NavigationContainer independent = {true}>
+          <Stack.Navigator initialRouteName="ServicesScreen">
+            <Stack.Screen name="ServicesScreen" component={ServicesScreen} options = {{headerShown:false}} />
+            <Stack.Screen name="Health Records" component={HealthRecords} options =  {{headerTitleStyle:{fontFamily:"NotoSerifJPSemiBold",color:'black'},headerBackTitle:"",headerTintColor:"#C383F4"}}/>
+          </Stack.Navigator>
+        </NavigationContainer>
+    );
 }
 
 const style = StyleSheet.create({

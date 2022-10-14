@@ -1,9 +1,9 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from "./src/screens/Home"
-import Services from "./src/screens/Services"
-import Articles from "./src/screens/Articles"
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
+import Home from "./src/screens/Home";
+import Services from "./src/screens/Services";
+import Articles from "./src/screens/Articles";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useFonts } from 'expo-font';
 
 const Tab = createBottomTabNavigator()
@@ -21,7 +21,7 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer independent = {true}>
       <Tab.Navigator screenOptions={({route}) => ({
         tabBarIcon: ({color, size}) => {
           let iconName;
