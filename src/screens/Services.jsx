@@ -6,7 +6,7 @@ import Button from "../components/Button";
 import globalStyles from "../styles/global";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+import RefreshButton from "../components/RefreshButton";
 
 const getTransactions = async (wallet,setData,setModalVisible,modalVisible)=>{
     const apiURL = 'http://13.212.100.69:5000';
@@ -25,7 +25,7 @@ const getTransactions = async (wallet,setData,setModalVisible,modalVisible)=>{
     }))
 }
 
-const sendTriage = async (wallet,setData,setModalVisible,modalVisible)=>{
+const sendTriage = async (wallet,setData,setModalVisible,modalVisible,keys,addKey)=>{
     setModalVisible(!modalVisible);
     const apiURL = 'http://13.212.100.69:5000';
     await fetch(apiURL + "/safePublish/sendTriage", {
@@ -40,14 +40,30 @@ const sendTriage = async (wallet,setData,setModalVisible,modalVisible)=>{
     .then((response) => response.json())
     .then((data => {
         setData(data.key)
+        if (!Array.isArray(keys) && keys != []) {
+            addKey([data.key])
+        }
+        else {
+            addKey(keys.unshift(data.key))
+        }
         setModalVisible(!modalVisible)
+        console.log(keys)
     }))
-}
+}   
 
 const HealthRecords = () => {
+    const [userData,setData] = useState("Health Records")
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style = {{fontFamily: "NotoSerifJPSemiBold"}}>Health Records</Text>
+        <View style = {style.container}>
+            <View style={globalStyles.container}>
+            <Text style = {{fontFamily: "NotoSerifJPSemiBold"}}>{userData}</Text>
+            </View>
+            <View style = {style.refresh}>
+                <RefreshButton icon="refresh" onPress={() => {
+                    //Load data
+                    getTransactions("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",setData)
+                }} />
+            </View>
         </View>
     );
 }
@@ -56,6 +72,7 @@ const HealthRecords = () => {
 const ServicesScreen = ({navigation}) => {
     const [userData,setData] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
+    const [keys,addKey] = useState([]);
     const [loaded] = useFonts({
         NotoSerifJPRegular: require('../../assets/NotoSerifJP-Regular.otf'),
         NotoSerifJPSemiBold: require('../../assets/NotoSerifJP-SemiBold.otf'),
@@ -94,11 +111,11 @@ const ServicesScreen = ({navigation}) => {
             <View style = {style.single}>
                 <Button icon="sort" customStyle={{flexGrow:1}} title={"Triage"} onPress={() => {
                     setData("");
-                    sendTriage("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",setData,setModalVisible,modalVisible);
+                    sendTriage("0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",setData,setModalVisible,modalVisible,keys,addKey);
                 }} />
             </View>
             <View style={style.split}>
-                <Button icon="archive-edit" customStyle={[style.occupy, {marginRight: 8}]} title={"Update Records"} onPress={() => {/* TODO: Add functionality */}} />
+                <Button icon="archive-edit" customStyle={[style.occupy, {marginRight: 8}]} title={"Update Records"} onPress={() => {/* TODO: Scan QR Code, then display information + confirmation button to push */}} />
                 <Button icon="archive-search" customStyle={[style.occupy, {marginLeft: 8}]} title={"View Records"} onPress={() => {navigation.navigate("Health Records")}} />
             </View>
             </View>
@@ -130,6 +147,11 @@ const Services = () => {
 }
 
 const style = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "white",
+        padding: 32,
+    },
     split: {
         display: "flex",
         flexDirection: "row",
@@ -181,6 +203,12 @@ const style = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5
+    },
+    refresh: {
+        marginBottom: 8,
+        display:"flex",
+        flexDirection:"row",
+        alignSelf:"flex-end"
     },
 })
 

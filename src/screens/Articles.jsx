@@ -3,10 +3,54 @@ import globalStyles from "../styles/global";
 import { useState } from "react";
 import { useFonts } from 'expo-font';
 import Device from "../components/Device";
+import Card from "../components/Card";
 import RefreshButton from "../components/RefreshButton";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Articles = () => {
-    const [userData,setData] = useState("test");
+const getTransactions = async (wallet,setData,setModalVisible,modalVisible)=>{
+    const apiURL = 'http://13.212.100.69:5000';
+    await fetch(apiURL + "/safePublish/getTransactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userAddress: wallet,
+        }),
+    })
+    .then((response) => response.json())
+    .then((data => {
+        // console.log(data.transactions);
+        const articles = data.transactions.map((article) => {
+            const [discipline, id, topic, name, credentials, body] = article.split("^");
+            return { discipline: discipline, id: id, topic: topic, name: name, credentials: credentials, body: body };
+        });
+        setData(articles);
+    }))
+}
+
+const ArticleDetailView = () => {
+    const [body,setBody] = useState ("");
+
+    const [loaded] = useFonts({
+        NotoSerifJPRegular: require('../../assets/NotoSerifJP-Regular.otf'),
+        NotoSerifJPSemiBold: require('../../assets/NotoSerifJP-SemiBold.otf'),
+        NotoSerifJPBold: require('../../assets/NotoSerifJP-Bold.otf')
+    });
+    if (!loaded) {
+        return null;
+    }
+
+    return (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style = {{fontFamily: "NotoSerifJPSemiBold"}}>{body}</Text>
+        </View>
+    );
+}
+
+const ArticlesView = ({navigation}) => {
+    const [userData,setData] = useState("Refresh Data");
 
     const [loaded] = useFonts({
         NotoSerifJPRegular: require('../../assets/NotoSerifJP-Regular.otf'),
@@ -22,15 +66,40 @@ const Articles = () => {
         <View style={style.header}>
             <Text style = {{fontFamily: "NotoSerifJPSemiBold",fontSize:32,marginTop:50,marginBottom:0}}>Articles</Text>
             <View style = {globalStyles.container}>
-                <Text>{userData}</Text>
+                {Array.isArray(userData) ? userData.map((article) => (
+                    <Card key={article.id + article.discipline} id={article.id} topic={article.topic} name={article.name} navigation={navigation} />
+                )): <Text>someth</Text>}
             </View>
             <View style = {style.refresh}>
                 <RefreshButton icon="refresh" onPress={() => {
-                    
+                    getTransactions("0xB69d024d1DCc50d3019Fd939746b565873009AEC",setData);
                 }} />
             </View>
         </View>
     )
+}
+
+const Stack = createNativeStackNavigator();
+
+const Articles = () => {
+    const [loaded] = useFonts({
+        NotoSerifJPRegular: require('../../assets/NotoSerifJP-Regular.otf'),
+        NotoSerifJPSemiBold: require('../../assets/NotoSerifJP-SemiBold.otf'),
+        NotoSerifJPBold: require('../../assets/NotoSerifJP-Bold.otf')
+    });
+
+    if (!loaded) {
+        return null;
+    }
+
+    return (
+        <NavigationContainer independent = {true}>
+          <Stack.Navigator initialRouteName="ServicesScreen">
+            <Stack.Screen name="Articles" component={ArticlesView} options = {{headerShown:false}} />
+            <Stack.Screen name="Article" component={ArticleDetailView} options =  {{headerBackTitle:"",headerTintColor:"#C383F4"}}/>
+          </Stack.Navigator>
+        </NavigationContainer>
+    );
 }
 
 const style = StyleSheet.create({
