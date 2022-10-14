@@ -34,7 +34,12 @@
     "web3": "^1.8.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react-native": "^4.0.0",
+    "prettier": "^2.7.1"
   },
   "private": true,
   "packageManager": "yarn@3.2.3"
