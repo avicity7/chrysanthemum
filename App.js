@@ -1,10 +1,10 @@
-import { NavigationContainer, StackActions } from "@react-navigation/native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer, StackActions } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import Articles from "./src/screens/Articles";
 import Home from "./src/screens/Home";
 import Services from "./src/screens/Services";
-import Articles from "./src/screens/Articles";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useFonts } from "expo-font";
 
 const Tab = createBottomTabNavigator();
 
