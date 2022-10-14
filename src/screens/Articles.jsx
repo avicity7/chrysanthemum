@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import Card from "../components/Card";
 import Device from "../components/Device";
 import RefreshButton from "../components/RefreshButton";
@@ -89,17 +89,47 @@ const ArticlesView = ({ navigation }) => {
       </Text>
       <View style={globalStyles.container}>
         {Array.isArray(userData) ? (
-          userData.map((article) => (
-            <Card
-              key={article.id + article.discipline}
-              id={article.id}
-              topic={article.topic}
-              name={article.name}
-              navigation={navigation}
-            />
-          ))
+          <FlatList
+            style={{ width: "100%" }}
+            data={userData}
+            keyExtractor={(item) => item.id + item.discipline}
+            renderItem={({ item }) => (
+              <View style={style.item}>
+                <Text
+                  style={{ fontSize: 18, fontFamily: "NotoSerifJPSemiBold" }}
+                >
+                  {item.topic}
+                </Text>
+                <View
+                  style={{
+                    marginTop: 8,
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text
+                    style={{ flexGrow: 1, fontFamily: "NotoSerifJPRegular" }}
+                  >
+                    {item.name}
+                  </Text>
+                  <Text style={{ fontFamily: "NotoSerifJPRegular" }}>
+                    {item.id}
+                  </Text>
+                </View>
+              </View>
+            )}
+          />
         ) : (
-          <Text>someth</Text>
+          <Text
+            style={{
+              fontFamily: "NotoSerifJPRegular",
+              fontSize: 16,
+              textAlign: "center",
+            }}
+          >
+            Select the refresh button below to fetch the latest articles.
+          </Text>
         )}
       </View>
       <View style={style.refresh}>
@@ -169,6 +199,12 @@ const style = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignSelf: "flex-end",
+  },
+  item: {
+    padding: 16,
+    backgroundColor: "#F9F9F9",
+    marginVertical: 8,
+    borderRadius: 8,
   },
 });
 
