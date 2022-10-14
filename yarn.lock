@@ -5316,6 +5316,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-react-native: ^4.0.0
     expo: ~46.0.13
+    expo-barcode-scanner: ~11.4.0
     expo-cli: ^6.0.6
     expo-font: ^10.2.1
     expo-status-bar: ~1.4.0
@@ -7677,6 +7678,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-barcode-scanner@npm:~11.4.0":
+  version: 11.4.0
+  resolution: "expo-barcode-scanner@npm:11.4.0"
+  dependencies:
+    "@expo/config-plugins": ~5.0.0
+    expo-image-loader: ~3.2.0
+  peerDependencies:
+    expo: "*"
+  checksum: 9110f255da8a6b4efb8421b86937b740a91f657d11a4f58e2690f51ce86c9a9f72bd571bc3c582294073fcd2f6cb4fc54d15b94af6467471d55bdfb75f74eaa8
+  languageName: node
+  linkType: hard
+
 "expo-cli@npm:^6.0.6":
   version: 6.0.6
   resolution: "expo-cli@npm:6.0.6"
@@ -7785,6 +7798,15 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: fa82616614b393ecb8e7dce91de8043c0e7b5ebc2145ec816b37179bef5ac2b81fdf3ea750b93d47e3702978f08f6b40373c91844098cc62ed43b42d7d73ed63
+  languageName: node
+  linkType: hard
+
+"expo-image-loader@npm:~3.2.0":
+  version: 3.2.0
+  resolution: "expo-image-loader@npm:3.2.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 0d24716c7c2dd194cbc0d360765b822ca2b53eaafab6d9cb8dcc84f088dedce68d13d6d3a6eba998e24944333ba8856dbb11a0dceb367ac30b2ae488b1339626
   languageName: node
   linkType: hard
 

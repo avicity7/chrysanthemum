@@ -21,6 +21,7 @@
     "dotenv": "^16.0.3",
     "dotenv-vault": "^1.13.10",
     "expo": "~46.0.13",
+    "expo-barcode-scanner": "~11.4.0",
     "expo-cli": "^6.0.6",
     "expo-font": "^10.2.1",
     "expo-status-bar": "~1.4.0",

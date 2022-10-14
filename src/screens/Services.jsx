@@ -1,7 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { BarCodeScanner } from "expo-barcode-scanner";
 import { useFonts } from "expo-font";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Button from "../components/Button";
@@ -154,20 +155,41 @@ const HealthRecords = () => {
 
 const ServicesScreen = ({ navigation }) => {
   const [userData, setData] = useState("");
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+  const [triageModalVisible, setTriageModalVisible] = useState(false);
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [keys, addKey] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-<<<<<<< HEAD
   const [loaded] = useFonts({
     NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
     NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
     NotoSerifJPBold: require("../../assets/NotoSerifJP-Bold.otf"),
   });
 
+  useEffect(() => {
+    const getBarCodeScannerPermissions = async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    };
+
+    if (hasPermission === null && updateModalVisible) {
+      getBarCodeScannerPermissions();
+    }
+  }, []);
+
   if (!loaded) {
     return null;
   }
-=======
   const [keys, addKey] = useState([]);
->>>>>>> 6e1a0fccd11ee10e9e41d2d5501e1174afbaaf5e
+
+  const handleBarCodeScanned = ({ data }) => {
+    setScanned(true);
+    console.log(data);
+    // TODO: Handle scanned data
+
+    setUpdateModalVisible(!updateModalVisible);
+  };
 
   return (
     <View style={style.header}>
@@ -185,10 +207,10 @@ const ServicesScreen = ({ navigation }) => {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={modalVisible}
+          visible={triageModalVisible}
           onRequestClose={() => {
             Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
+            setTriageModalVisible(!triageModalVisible);
           }}
         >
           <View style={style.centeredView}>
@@ -202,7 +224,48 @@ const ServicesScreen = ({ navigation }) => {
               </Text>
               <Pressable
                 style={[style.button, style.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
+                onPress={() => setTriageModalVisible(!triageModalVisible)}
+              >
+                <Text
+                  style={{ fontFamily: "NotoSerifJPBold", color: "#FFFFFF" }}
+                >
+                  Close
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={updateModalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setUpdateModalVisible(!updateModalVisible);
+          }}
+        >
+          <View style={style.centeredView}>
+            <View style={style.modalView}>
+              <Text style={{ fontFamily: "NotoSerifJPRegular" }}>
+                {hasPermission === false ? (
+                  <Text>
+                    You have denied access to the camera. To use this feature,
+                    open Settings and enable Camera access for this app.
+                  </Text>
+                ) : (
+                  <View style={style.barcodeView}>
+                    <BarCodeScanner
+                      onBarCodeScanned={
+                        scanned ? undefined : handleBarCodeScanned
+                      }
+                      style={StyleSheet.absoluteFillObject}
+                    />
+                  </View>
+                )}
+              </Text>
+              <Pressable
+                style={[style.button, style.buttonClose]}
+                onPress={() => setUpdateModalVisible(!updateModalVisible)}
               >
                 <Text
                   style={{ fontFamily: "NotoSerifJPBold", color: "#FFFFFF" }}
@@ -223,8 +286,13 @@ const ServicesScreen = ({ navigation }) => {
               sendTriage(
                 "0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",
                 setData,
+                setTriageModalVisible,
+                triageModalVisible,
+                keys,
+                addKey
                 setModalVisible,
                 modalVisible,
+
               );
             }}
           />
@@ -235,7 +303,7 @@ const ServicesScreen = ({ navigation }) => {
             customStyle={[style.occupy, { marginRight: 8 }]}
             title={"Update Records"}
             onPress={() => {
-              /* TODO: Scan QR Code, then display information + confirmation button to push */
+              setUpdateModalVisible(!updateModalVisible);
             }}
           />
           <Button
@@ -343,6 +411,10 @@ const style = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignSelf: "flex-end",
+  },
+  barcodeView: {
+    width: 200,
+    height: 200,
   },
 });
 
