@@ -54,6 +54,14 @@ function encryptData(data) {
   return [data.toString(), secretKey];
 }
 
+function decryptData(data, secretKey) {
+  console.log(data);
+  console.log(secretKey);
+  console.log(
+    CryptoJS.AES.decrypt(data, secretKey).toString(CryptoJS.enc.Utf8)
+  );
+}
+
 async function send(data, address) {
   var userContract = new web3.eth.Contract(abi, address);
   web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
@@ -143,6 +151,7 @@ module.exports = {
   removeTransactionHeaders,
   sendTriage,
   getDeviceData,
+  decryptData,
 };
 
 //Encrypting + Decrypting Data
