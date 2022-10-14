@@ -7,7 +7,20 @@ import QRCode from "react-native-qrcode-svg";
 import Button from "../components/Button";
 import RefreshButton from "../components/RefreshButton";
 import globalStyles from "../styles/global";
+import Storage from 'react-native-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const storage = new Storage({
+    size: 1000,
+    storageBackend: AsyncStorage,
+    defaultExpires: null,
+  
+    enableCache: true,
+    sync: {
+      // we'll talk about the details later.
+    }
+  });
+  
 const getTransactions = async (
   wallet,
   setData,
@@ -27,6 +40,16 @@ const getTransactions = async (
     .then((response) => response.json())
     .then((data) => {
       setData(data.transactions);
+      console.log("done")
+      storage.getAllDataForKey('secretKey').then(keys => {
+        console.log(keys);
+        /*
+        for (var x = keys.length; x==0 ;x--){
+            decryptData(userData,keys[x],setDecrypted);
+            records += decrypted;
+        }
+        */
+      });
     });
 };
 
@@ -35,8 +58,6 @@ const sendTriage = async (
   setData,
   setModalVisible,
   modalVisible,
-  keys,
-  addKey
 ) => {
   setModalVisible(!modalVisible);
   const apiURL = "http://13.212.100.69:5000";
@@ -52,32 +73,78 @@ const sendTriage = async (
     .then((response) => response.json())
     .then((data) => {
       setData(data.key);
-      if (!Array.isArray(keys) && keys != []) {
-        addKey([data.key]);
-      } else {
-        addKey(keys.unshift(data.key));
-      }
       setModalVisible(!modalVisible);
-      console.log(keys);
+      storage.getAllDataForKey('secretKey')
+        .then(data => {
+            let latestID = parseInt(ids[ids.length-1]);
+            
+            storage.save({
+                key: 'secretKey',
+                id: latestID + 1,
+                data: data.key,
+                expires: null
+            });
+        
+        })
+        .catch(err =>{
+            storage.save({
+                key: 'secretKey',
+                id: '1',
+                data: data.key,
+                expires: null
+            });
+        })
+
     });
 };
 
+const decryptData = async (data,secretKey,setDecrypted) => {
+    const apiURL = "http://13.212.100.69:5000";
+    await fetch(apiURL + "/safePublish/decryptData", {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+        data: data,
+        secretKey: secretKey
+        }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+        console.log(data.decryptedData);
+    });
+}
+
 const HealthRecords = () => {
+    var records = [];
   const [userData, setData] = useState("Health Records");
+  const [decrypted, setDecrypted] = useState();
   return (
     <View style={style.container}>
       <View style={globalStyles.container}>
-        <Text style={{ fontFamily: "NotoSerifJPSemiBold" }}>{userData}</Text>
+        <Text style={{ fontFamily: "NotoSerifJPSemiBold" }}></Text>
       </View>
       <View style={style.refresh}>
         <RefreshButton
           icon="refresh"
           onPress={() => {
             //Load data
+            /*
             getTransactions(
               "0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",
-              setData
-            );
+              setData);
+            */
+              storage.getAllDataForKey('secretKey').then(keys => {
+                console.log(keys.length);
+                for (var x = keys.length; x>=0 ;x--){
+                    console.log(x)
+                    decryptData(userData,keys[x],setDecrypted);
+                    records += decrypted;
+                    console.log(records)
+                }
+              });
+            
           }}
         />
       </View>
@@ -88,7 +155,6 @@ const HealthRecords = () => {
 const ServicesScreen = ({ navigation }) => {
   const [userData, setData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [keys, addKey] = useState([]);
   const [loaded] = useFonts({
     NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
     NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
@@ -155,8 +221,6 @@ const ServicesScreen = ({ navigation }) => {
                 setData,
                 setModalVisible,
                 modalVisible,
-                keys,
-                addKey
               );
             }}
           />
