@@ -15,6 +15,12 @@ const globalStyles = StyleSheet.create({
     padding: 8,
     alignItems: "center",
   },
+  containerUnpressed: {
+    opacity: 1,
+  },
+  containerPressed: {
+    opacity: 0.5,
+  },
 });
 
 export default globalStyles;

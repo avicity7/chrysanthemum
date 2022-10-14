@@ -10,7 +10,7 @@ import {
   Text,
   View,
 } from "react-native";
-import Card from "../components/Card";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Device from "../components/Device";
 import RefreshButton from "../components/RefreshButton";
 import globalStyles from "../styles/global";
@@ -52,7 +52,6 @@ const getTransactions = async (
 
 const ArticleDetailView = ({ route }) => {
   const { article } = route.params;
-  const [body, setBody] = useState(article.body);
 
   const [loaded] = useFonts({
     NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
@@ -64,13 +63,33 @@ const ArticleDetailView = ({ route }) => {
   }
 
   return (
-    <View style={[globalStyles.container, { justifyContent: "flex-start" }]}>
-      <ScrollView>
-        <Text style={{ fontFamily: "NotoSerifJPRegular", fontSize: 16 }}>
-          {body}
+    // FIXME: Ensure that the ScrollView is not obstructed by the bottom nav bar.
+    <SafeAreaView
+      style={[globalStyles.container, { justifyContent: "flex-start" }]}
+    >
+      <ScrollView style={{ display: "flex", padding: 16 }}>
+        <Text
+          style={{
+            fontFamily: "NotoSerifJPRegular",
+            fontSize: 16,
+            flexGrow: 1,
+          }}
+        >
+          {article.body}
         </Text>
+        <View style={{ marginTop: 20 }}>
+          <Text style={{ fontFamily: "NotoSerifJPSemiBold" }}>
+            Article contributed by
+          </Text>
+          <Text style={{ fontFamily: "NotoSerifJPBold", fontSize: 16 }}>
+            {article.name}
+          </Text>
+          <Text style={{ fontFamily: "NotoSerifJPRegular", fontSize: 12 }}>
+            {article.credentials}
+          </Text>
+        </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -107,7 +126,13 @@ const ArticlesView = ({ navigation }) => {
             keyExtractor={(item) => item.id + item.discipline}
             renderItem={({ item }) => (
               <Pressable
-                style={style.item}
+                style={({ pressed }) => [
+                  pressed
+                    ? globalStyles.containerPressed
+                    : globalStyles.containerUnpressed,
+                  ,
+                  style.item,
+                ]}
                 onPress={() =>
                   navigation.navigate("Article", { article: item })
                 }
