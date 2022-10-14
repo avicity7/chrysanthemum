@@ -17,4 +17,5 @@ module.exports = {
   env: {
     "react-native/react-native": true,
   },
+  ignorePatterns: ["node_modules", "babel.config.js", "nodejs-assets"],
 };
