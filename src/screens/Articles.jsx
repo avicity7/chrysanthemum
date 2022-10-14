@@ -8,7 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native";
 import Card from "../components/Card";
 import Device from "../components/Device";
@@ -129,9 +129,6 @@ const ArticlesView = ({ navigation }) => {
                     style={{ flexGrow: 1, fontFamily: "NotoSerifJPRegular" }}
                   >
                     {item.name}
-                  </Text>
-                  <Text style={{ fontFamily: "NotoSerifJPRegular" }}>
-                    {item.id}
                   </Text>
                 </View>
               </Pressable>
