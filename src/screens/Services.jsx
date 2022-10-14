@@ -155,6 +155,7 @@ const HealthRecords = () => {
 const ServicesScreen = ({ navigation }) => {
   const [userData, setData] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+<<<<<<< HEAD
   const [loaded] = useFonts({
     NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
     NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
@@ -164,6 +165,9 @@ const ServicesScreen = ({ navigation }) => {
   if (!loaded) {
     return null;
   }
+=======
+  const [keys, addKey] = useState([]);
+>>>>>>> 6e1a0fccd11ee10e9e41d2d5501e1174afbaaf5e
 
   return (
     <View style={style.header}>
@@ -251,16 +255,6 @@ const ServicesScreen = ({ navigation }) => {
 const Stack = createNativeStackNavigator();
 
 const Services = () => {
-  const [loaded] = useFonts({
-    NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
-    NotoSerifJPSemiBold: require("../../assets/NotoSerifJP-SemiBold.otf"),
-    NotoSerifJPBold: require("../../assets/NotoSerifJP-Bold.otf"),
-  });
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName="ServicesScreen">
