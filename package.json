@@ -7,7 +7,10 @@
     "start:tunnel": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.4.0",
@@ -35,7 +38,13 @@
     "web3": "^1.8.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react-native": "^4.0.0",
+    "husky": "^8.0.1",
+    "prettier": "^2.7.1"
   },
   "private": true,
   "packageManager": "yarn@3.2.3"
