@@ -2,7 +2,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import { useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import Card from "../components/Card";
 import Device from "../components/Device";
 import RefreshButton from "../components/RefreshButton";
@@ -43,8 +50,9 @@ const getTransactions = async (
     });
 };
 
-const ArticleDetailView = () => {
-  const [body, setBody] = useState("");
+const ArticleDetailView = ({ route }) => {
+  const { article } = route.params;
+  const [body, setBody] = useState(article.body);
 
   const [loaded] = useFonts({
     NotoSerifJPRegular: require("../../assets/NotoSerifJP-Regular.otf"),
@@ -56,8 +64,12 @@ const ArticleDetailView = () => {
   }
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontFamily: "NotoSerifJPSemiBold" }}>{body}</Text>
+    <View style={[globalStyles.container, { justifyContent: "flex-start" }]}>
+      <ScrollView>
+        <Text style={{ fontFamily: "NotoSerifJPRegular", fontSize: 16 }}>
+          {body}
+        </Text>
+      </ScrollView>
     </View>
   );
 };
@@ -94,7 +106,12 @@ const ArticlesView = ({ navigation }) => {
             data={userData}
             keyExtractor={(item) => item.id + item.discipline}
             renderItem={({ item }) => (
-              <View style={style.item}>
+              <Pressable
+                style={style.item}
+                onPress={() =>
+                  navigation.navigate("Article", { article: item })
+                }
+              >
                 <Text
                   style={{ fontSize: 18, fontFamily: "NotoSerifJPSemiBold" }}
                 >
@@ -117,7 +134,7 @@ const ArticlesView = ({ navigation }) => {
                     {item.id}
                   </Text>
                 </View>
-              </View>
+              </Pressable>
             )}
           />
         ) : (
