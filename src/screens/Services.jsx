@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BarCodeScanner } from "expo-barcode-scanner";
@@ -5,23 +6,22 @@ import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
+import Storage from "react-native-storage";
 import Button from "../components/Button";
 import RefreshButton from "../components/RefreshButton";
 import globalStyles from "../styles/global";
-import Storage from 'react-native-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const storage = new Storage({
-    size: 1000,
-    storageBackend: AsyncStorage,
-    defaultExpires: null,
-  
-    enableCache: true,
-    sync: {
-      // we'll talk about the details later.
-    }
-  });
-  
+  size: 1000,
+  storageBackend: AsyncStorage,
+  defaultExpires: null,
+
+  enableCache: true,
+  sync: {
+    // we'll talk about the details later.
+  },
+});
+
 const getTransactions = async (
   wallet,
   setData,
@@ -41,8 +41,8 @@ const getTransactions = async (
     .then((response) => response.json())
     .then((data) => {
       setData(data.transactions);
-      console.log("done")
-      storage.getAllDataForKey('secretKey').then(keys => {
+      console.log("done");
+      storage.getAllDataForKey("secretKey").then((keys) => {
         console.log(keys);
         /*
         for (var x = keys.length; x==0 ;x--){
@@ -54,12 +54,7 @@ const getTransactions = async (
     });
 };
 
-const sendTriage = async (
-  wallet,
-  setData,
-  setModalVisible,
-  modalVisible,
-) => {
+const sendTriage = async (wallet, setData, setModalVisible, modalVisible) => {
   setModalVisible(!modalVisible);
   const apiURL = "http://13.212.100.69:5000";
   await fetch(apiURL + "/safePublish/sendTriage", {
@@ -75,50 +70,49 @@ const sendTriage = async (
     .then((data) => {
       setData(data.key);
       setModalVisible(!modalVisible);
-      storage.getAllDataForKey('secretKey')
-        .then(data => {
-            let latestID = parseInt(ids[ids.length-1]);
-            
-            storage.save({
-                key: 'secretKey',
-                id: latestID + 1,
-                data: data.key,
-                expires: null
-            });
-        
-        })
-        .catch(err =>{
-            storage.save({
-                key: 'secretKey',
-                id: '1',
-                data: data.key,
-                expires: null
-            });
-        })
+      storage
+        .getAllDataForKey("secretKey")
+        .then((data) => {
+          let latestID = parseInt(ids[ids.length - 1]);
 
+          storage.save({
+            key: "secretKey",
+            id: latestID + 1,
+            data: data.key,
+            expires: null,
+          });
+        })
+        .catch((err) => {
+          storage.save({
+            key: "secretKey",
+            id: "1",
+            data: data.key,
+            expires: null,
+          });
+        });
     });
 };
 
-const decryptData = async (data,secretKey,setDecrypted) => {
-    const apiURL = "http://13.212.100.69:5000";
-    await fetch(apiURL + "/safePublish/decryptData", {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-        data: data,
-        secretKey: secretKey
-        }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-        console.log(data.decryptedData);
+const decryptData = async (data, secretKey, setDecrypted) => {
+  const apiURL = "http://13.212.100.69:5000";
+  await fetch(apiURL + "/safePublish/decryptData", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      data: data,
+      secretKey: secretKey,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data.decryptedData);
     });
-}
+};
 
 const HealthRecords = () => {
-    var records = [];
+  var records = [];
   const [userData, setData] = useState("Health Records");
   const [decrypted, setDecrypted] = useState();
   return (
@@ -136,16 +130,15 @@ const HealthRecords = () => {
               "0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",
               setData);
             */
-              storage.getAllDataForKey('secretKey').then(keys => {
-                console.log(keys.length);
-                for (var x = keys.length; x>=0 ;x--){
-                    console.log(x)
-                    decryptData(userData,keys[x],setDecrypted);
-                    records += decrypted;
-                    console.log(records)
-                }
-              });
-            
+            storage.getAllDataForKey("secretKey").then((keys) => {
+              console.log(keys.length);
+              for (var x = keys.length; x >= 0; x--) {
+                console.log(x);
+                decryptData(userData, keys[x], setDecrypted);
+                records += decrypted;
+                console.log(records);
+              }
+            });
           }}
         />
       </View>
@@ -181,7 +174,6 @@ const ServicesScreen = ({ navigation }) => {
   if (!loaded) {
     return null;
   }
-  const [keys, addKey] = useState([]);
 
   const handleBarCodeScanned = ({ data }) => {
     setScanned(true);
@@ -289,10 +281,9 @@ const ServicesScreen = ({ navigation }) => {
                 setTriageModalVisible,
                 triageModalVisible,
                 keys,
-                addKey
+                addKey,
                 setModalVisible,
-                modalVisible,
-
+                modalVisible
               );
             }}
           />
