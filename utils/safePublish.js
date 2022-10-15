@@ -57,6 +57,7 @@ function encryptData(data) {
 function decrypt(data,keys){
   temp = [];
   for (var x = 0; x > keys.length; x++) {
+    console.log(x)
     temp += CryptoJS.AES.decrypt(data[x], keys[keys.length-(1+x)]).toString(CryptoJS.enc.Utf8)
   }
   return temp;
