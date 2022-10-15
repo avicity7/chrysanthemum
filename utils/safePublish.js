@@ -54,7 +54,7 @@ function encryptData(data) {
   return [data.toString(), secretKey];
 }
 
-function decrypt(data,keys){
+async function decrypt(data,keys){
   temp = [];
   for (var x = 0; x > keys.length; x++) {
     console.log(x)
