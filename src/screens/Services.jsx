@@ -47,7 +47,6 @@ const decryptData = async (data, secretKey, setDecrypted) => {
       decryptedData.pop();
       const mappedDecryptedData = decryptedData.map((dt) => {
         const [bpm, temp, sp02, today] = dt.split("^");
-        console.log(today);
         return {
           temp: temp,
           bpm: bpm,
