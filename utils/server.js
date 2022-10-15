@@ -41,7 +41,7 @@ app.post("/safePublish/decryptData", (req, res) => {
   const data = req.body.data;
   const keys = req.body.secretKey;
   res.setHeader("Content-Type", "application/json");
-  let output = decryptData(data, secretKey);
+  let output = decryptData(data, keys);
   output.then(function (result) {
     console.log(result);
     res.end(JSON.stringify({ decrypted: result }));
