@@ -243,7 +243,7 @@ const HealthRecords = () => {
               })
               .then((ret) => {
                 getTransactions(
-                  "0x9e942960941140aeF9F08308227e5EB8969766F4",
+                  "0x9CF6FfA836b2149E7b81A7535585cD4b81F100Dc",
                   setData,
                   setDecrypted,
                   userData
@@ -399,7 +399,7 @@ const ServicesScreen = ({ navigation }) => {
             onPress={() => {
               setData("");
               sendTriage(
-                "0x9e942960941140aeF9F08308227e5EB8969766F4",
+                "0x9CF6FfA836b2149E7b81A7535585cD4b81F100Dc",
                 setData,
                 setTriageModalVisible,
                 triageModalVisible,
