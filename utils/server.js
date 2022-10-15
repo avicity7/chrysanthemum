@@ -5,7 +5,7 @@ const {
   sendTriage,
   getTransactionHistory,
   getDeviceData,
-  decryptData
+  decryptData,
 } = require("./safePublish");
 
 app.use(express.json());
@@ -39,12 +39,12 @@ app.post("/safePublish/sendTriage", (req, res) => {
 app.post("/safePublish/decryptData", (req, res) => {
   console.log("decryptData received!");
   const data = req.body.data;
-  const secretKey = req.body.secretKey
+  const secretKey = req.body.secretKey;
   res.setHeader("Content-Type", "application/json");
-  let output = decryptData(data,secretKey);
+  let output = decryptData(data, secretKey);
   output.then(function (result) {
     console.log(result);
-    res.end(JSON.stringify({ encryptedData: result }));
+    res.end(JSON.stringify({ decrypted: result }));
   });
 });
 
