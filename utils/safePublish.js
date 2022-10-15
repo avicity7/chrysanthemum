@@ -54,7 +54,7 @@ function encryptData(data) {
   return [data.toString(), secretKey];
 }
 
-function decryptData(data, secretKey) {
+async function decryptData(data, secretKey) {
   return CryptoJS.AES.decrypt(data, secretKey).toString(CryptoJS.enc.Utf8)
 }
 
