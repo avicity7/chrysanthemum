@@ -55,15 +55,22 @@ function encryptData(data) {
 }
 
 async function decryptData(data, keys) {
-  output = ""
+  output = "";
   for (var x = 0; x < keys.length; x++) {
-    console.log(x)
-    console.log(keys[keys.length-(1+x)])
-    console.log(data[x])
-    console.log(CryptoJS.AES.decrypt(data[x], keys[keys.length-(1+x)]).toString(CryptoJS.enc.Utf8))
-    output += CryptoJS.AES.decrypt(data[x], keys[keys.length-(1+x)]).toString(CryptoJS.enc.Utf8) + "BREAK"
+    console.log(x);
+    console.log(keys[keys.length - (1 + x)]);
+    console.log(data[x]);
+    console.log(
+      CryptoJS.AES.decrypt(data[x], keys[keys.length - (1 + x)]).toString(
+        CryptoJS.enc.Utf8
+      )
+    );
+    output +=
+      CryptoJS.AES.decrypt(data[x], keys[keys.length - (1 + x)]).toString(
+        CryptoJS.enc.Utf8
+      ) + "BREAK";
   }
-  return output
+  return output;
 }
 
 async function send(data, address) {
@@ -81,8 +88,13 @@ async function sendTriage(address) {
     "." +
     Math.ceil(generator.random() * (9 - 1) + 1);
   const sp02 = Math.ceil(generator.random() * (100 - 95) + 95) + "%";
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+  const today = mm + '/' + dd + '/' + yyyy;
   return new Promise((resolve) => {
-    let encrypted = encryptData(bpm + "^" + temp + "^" + sp02);
+    let encrypted = encryptData(bpm + "^" + temp + "^" + sp02+"^"+today);
     let key = send(encrypted[0], address);
     key.then(function () {
       console.log(encrypted[1] + "safePublish.js");
