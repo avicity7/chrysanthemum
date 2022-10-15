@@ -55,13 +55,13 @@ function encryptData(data) {
 }
 
 async function decryptData(data, keys) {
-  output = []
+  output = ""
   for (var x = 0; x < keys.length; x++) {
     console.log(x)
     console.log(keys[keys.length-(1+x)])
     console.log(data[x])
     console.log(CryptoJS.AES.decrypt(data[x], keys[keys.length-(1+x)]).toString(CryptoJS.enc.Utf8))
-    output += CryptoJS.AES.decrypt(data[x], keys[keys.length-(1+x)]).toString(CryptoJS.enc.Utf8)
+    output += CryptoJS.AES.decrypt(data[x], keys[keys.length-(1+x)]).toString(CryptoJS.enc.Utf8) + "BREAK"
   }
   return output
 }
