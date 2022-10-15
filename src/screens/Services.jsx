@@ -4,7 +4,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View, FlatList } from "react-native";
+import {
+  FlatList,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Storage from "react-native-storage";
 import Button from "../components/Button";
@@ -36,15 +43,15 @@ const decryptData = async (data, secretKey, setDecrypted) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      let decryptedData = data.decrypted.split('BREAK');
+      let decryptedData = data.decrypted.split("BREAK");
       decryptedData.pop();
       const mappedDecryptedData = decryptedData.map((dt) => {
-        const [temp,bpm,sp02] =
-          dt.split("^");
+        const [bpm, temp, sp02, today] = dt.split("^");
         return {
-          temp:temp,
-          bpm:bpm,
-          sp02:sp02
+          temp: temp,
+          bpm: bpm,
+          sp02: sp02,
+          date: new Date(today),
         };
       });
       console.log(mappedDecryptedData);
@@ -58,7 +65,7 @@ const getTransactions = async (
   setDecrypted,
   userData,
   setModalVisible,
-  modalVisible,
+  modalVisible
 ) => {
   const apiURL = "http://13.212.100.69:5000";
   await fetch(apiURL + "/safePublish/getTransactions", {
@@ -74,25 +81,25 @@ const getTransactions = async (
     .then((data) => {
       setData(data.transactions);
       storage
-            .load({
-              key: 'secretKey'
-            })
-            .then(ret => {  
-              decryptData(data.transactions, ret, setDecrypted);
-            })
-            .catch(err => {
-              // any exception including data not found
-              // goes to catch()
-              console.warn(err.message);
-              switch (err.name) {
-                case 'NotFoundError':
-                  // TODO;
-                  break;
-                case 'ExpiredError':
-                  // TODO
-                  break;
-              }
-            });
+        .load({
+          key: "secretKey",
+        })
+        .then((ret) => {
+          decryptData(data.transactions, ret, setDecrypted);
+        })
+        .catch((err) => {
+          // any exception including data not found
+          // goes to catch()
+          console.warn(err.message);
+          switch (err.name) {
+            case "NotFoundError":
+              // TODO;
+              break;
+            case "ExpiredError":
+              // TODO
+              break;
+          }
+        });
     });
 };
 
@@ -113,36 +120,36 @@ const sendTriage = async (wallet, setData, setModalVisible, modalVisible) => {
       setData(data.key);
       setModalVisible(!modalVisible);
       storage
-            .load({
-              key: 'secretKey'
-            })
-            .then(ret => {
-              // found data goes to then()
-              ret.push(data.key)
+        .load({
+          key: "secretKey",
+        })
+        .then((ret) => {
+          // found data goes to then()
+          ret.push(data.key);
+          storage.save({
+            key: "secretKey",
+            data: ret,
+            expires: null,
+          });
+          console.log(ret);
+        })
+        .catch((err) => {
+          // any exception including data not found
+          // goes to catch()
+          console.warn(err.message);
+          switch (err.name) {
+            case "NotFoundError":
               storage.save({
-                key: 'secretKey',
-                data: ret,
-                expires: null
-              })
-             console.log(ret)
-            })
-            .catch(err => {
-              // any exception including data not found
-              // goes to catch()
-              console.warn(err.message);
-              switch (err.name) {
-                case 'NotFoundError':
-                  storage.save({
-                    key: 'secretKey',
-                    data: [data.key],
-                    expires: null
-                  })
-                  break;
-                case 'ExpiredError':
-                  // TODO
-                  break;
-              }
-            });
+                key: "secretKey",
+                data: [data.key],
+                expires: null,
+              });
+              break;
+            case "ExpiredError":
+              // TODO
+              break;
+          }
+        });
     });
 };
 
@@ -150,13 +157,19 @@ const HealthRecords = () => {
   var records = [];
   const [userData, setData] = useState("Health Records");
   const [decrypted, setDecrypted] = useState();
+  const friendlyNames = {
+    temp: "Temperature",
+    bpm: "Heart Rate",
+    sp02: "Oxygen Saturation",
+  };
+
   return (
     <View style={style.container}>
       <View style={globalStyles.container}>
         {Array.isArray(decrypted) ? (
           <FlatList
             style={{ width: "100%" }}
-            data={userData}
+            data={decrypted}
             renderItem={({ item }) => (
               <Pressable
                 style={({ pressed }) => [
@@ -166,29 +179,44 @@ const HealthRecords = () => {
                   ,
                   style.item,
                 ]}
-                onPress={() =>
-                  navigation.navigate("Article", { article: item })
-                }
               >
+                {Object.keys(item)
+                  .slice(0, -1)
+                  .map((key) => (
+                    <View
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          flexGrow: 1,
+                          fontFamily: "NotoSerifJPSemiBold",
+                          fontSize: 16,
+                        }}
+                      >
+                        {friendlyNames[key]}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "NotoSerifJPRegular",
+                          fontSize: 16,
+                        }}
+                      >
+                        {item[key]}
+                      </Text>
+                    </View>
+                  ))}
                 <Text
-                  style={{ fontSize: 18, fontFamily: "NotoSerifJPSemiBold" }}
+                  style={{ marginTop: 8, fontFamily: "NotoSerifJPRegular" }}
                 >
-                  {item.topic}
+                  Data from{" "}
+                  {item.date.toLocaleString("en-SG", {
+                    dateStyle: "medium",
+                  })}
                 </Text>
-                <View
-                  style={{
-                    marginTop: 8,
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                  }}
-                >
-                  <Text
-                    style={{ flexGrow: 1, fontFamily: "NotoSerifJPRegular" }}
-                  >
-                    {item.name}
-                  </Text>
-                </View>
               </Pressable>
             )}
           />
@@ -210,27 +238,30 @@ const HealthRecords = () => {
           onPress={() => {
             //Load data
             storage
-            .load({
-              key: 'secretKey'
-            })
-            .then(ret => {
-              getTransactions(
-                "0x9e942960941140aeF9F08308227e5EB8969766F4",
-                setData,setDecrypted,userData);
-            })
-            .catch(err => {
-              // any exception including data not found
-              // goes to catch()
-              console.log(err.message);
-              switch (err.name) {
-                case 'NotFoundError':
-                  // TODO;
-                  break;
-                case 'ExpiredError':
-                  // TODO
-                  break;
-              }
-            });
+              .load({
+                key: "secretKey",
+              })
+              .then((ret) => {
+                getTransactions(
+                  "0x9e942960941140aeF9F08308227e5EB8969766F4",
+                  setData,
+                  setDecrypted,
+                  userData
+                );
+              })
+              .catch((err) => {
+                // any exception including data not found
+                // goes to catch()
+                console.log(err.message);
+                switch (err.name) {
+                  case "NotFoundError":
+                    // TODO;
+                    break;
+                  case "ExpiredError":
+                    // TODO
+                    break;
+                }
+              });
           }}
         />
       </View>

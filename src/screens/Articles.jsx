@@ -63,10 +63,8 @@ const ArticleDetailView = ({ route }) => {
   }
 
   return (
-    <SafeAreaView
-      style={[globalStyles.container, {flex:1,marginTop:-45}]}
-    >
-      <ScrollView style={{paddingHorizontal: 16}}>
+    <SafeAreaView style={[globalStyles.container, { flex: 1, marginTop: -45 }]}>
+      <ScrollView style={{ paddingHorizontal: 16 }}>
         <Text
           style={{
             fontFamily: "NotoSerifJPRegular",
@@ -189,7 +187,10 @@ const Articles = () => {
         <Stack.Screen
           name="Article"
           component={ArticleDetailView}
-          options={{ headerBackTitle: "", headerTintColor: "#C383F4",headerTitleStyle: {
+          options={{
+            headerBackTitle: "",
+            headerTintColor: "#C383F4",
+            headerTitleStyle: {
               fontFamily: "NotoSerifJPSemiBold",
               color: "black",
             },
