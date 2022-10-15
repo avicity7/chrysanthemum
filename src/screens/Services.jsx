@@ -46,11 +46,12 @@ const decryptData = async (data, secretKey, setDecrypted) => {
       let decryptedData = data.decrypted.split("BREAK");
       decryptedData.pop();
       const mappedDecryptedData = decryptedData.map((dt) => {
-        const [temp, bpm, sp02] = dt.split("^");
+        const [bpm, temp, sp02, today] = dt.split("^");
         return {
           temp: temp,
           bpm: bpm,
           sp02: sp02,
+          date: new Date(today),
         };
       });
       console.log(mappedDecryptedData);
@@ -156,13 +157,19 @@ const HealthRecords = () => {
   var records = [];
   const [userData, setData] = useState("Health Records");
   const [decrypted, setDecrypted] = useState();
+  const friendlyNames = {
+    temp: "Temperature",
+    bpm: "Heart Rate",
+    sp02: "Oxygen Saturation",
+  };
+
   return (
     <View style={style.container}>
       <View style={globalStyles.container}>
         {Array.isArray(decrypted) ? (
           <FlatList
             style={{ width: "100%" }}
-            data={userData}
+            data={decrypted}
             renderItem={({ item }) => (
               <Pressable
                 style={({ pressed }) => [
@@ -172,29 +179,44 @@ const HealthRecords = () => {
                   ,
                   style.item,
                 ]}
-                onPress={() =>
-                  navigation.navigate("Article", { article: item })
-                }
               >
+                {Object.keys(item)
+                  .slice(0, -1)
+                  .map((key) => (
+                    <View
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          flexGrow: 1,
+                          fontFamily: "NotoSerifJPSemiBold",
+                          fontSize: 16,
+                        }}
+                      >
+                        {friendlyNames[key]}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "NotoSerifJPRegular",
+                          fontSize: 16,
+                        }}
+                      >
+                        {item[key]}
+                      </Text>
+                    </View>
+                  ))}
                 <Text
-                  style={{ fontSize: 18, fontFamily: "NotoSerifJPSemiBold" }}
+                  style={{ marginTop: 8, fontFamily: "NotoSerifJPRegular" }}
                 >
-                  {item.topic}
+                  Data from{" "}
+                  {item.date.toLocaleString("en-SG", {
+                    dateStyle: "medium",
+                  })}
                 </Text>
-                <View
-                  style={{
-                    marginTop: 8,
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                  }}
-                >
-                  <Text
-                    style={{ flexGrow: 1, fontFamily: "NotoSerifJPRegular" }}
-                  >
-                    {item.name}
-                  </Text>
-                </View>
               </Pressable>
             )}
           />
