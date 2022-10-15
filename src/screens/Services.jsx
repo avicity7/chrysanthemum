@@ -302,7 +302,7 @@ const ServicesScreen = ({ navigation }) => {
         <View style={style.single}>
           <Button
             icon="sort"
-            customStyle={{ flexGrow: 1 }}
+            style={{ flexGrow: 1 }}
             title={"Triage"}
             onPress={() => {
               setData("");
@@ -320,7 +320,7 @@ const ServicesScreen = ({ navigation }) => {
         <View style={style.split}>
           <Button
             icon="archive-edit"
-            customStyle={[style.occupy, { marginRight: 8 }]}
+            style={[style.occupy, { marginRight: 8 }]}
             title={"Update Records"}
             onPress={() => {
               setUpdateModalVisible(!updateModalVisible);
@@ -328,7 +328,7 @@ const ServicesScreen = ({ navigation }) => {
           />
           <Button
             icon="archive-search"
-            customStyle={[style.occupy, { marginLeft: 8 }]}
+            style={[style.occupy, { marginLeft: 8 }]}
             title={"View Records"}
             onPress={() => {
               navigation.navigate("Health Records");
