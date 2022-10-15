@@ -228,7 +228,7 @@ const HealthRecords = () => {
               textAlign: "center",
             }}
           >
-            Select the refresh button below to fetch the latest articles.
+            Press the refresh button to fetch health records.
           </Text>
         )}
       </View>
