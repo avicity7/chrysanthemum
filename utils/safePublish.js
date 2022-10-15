@@ -54,16 +54,12 @@ function encryptData(data) {
   return [data.toString(), secretKey];
 }
 
-function decrypt(data,key){
-  new Promise(resolve => (
-    resolve(CryptoJS.AES.decrypt(data, key).toString(CryptoJS.enc.Utf8))));
-}
-
-async function decryptData(data, secretKey) {
-  output =[]
-  for (var x = 0;x>secretKey.length;x++) {
-    output += await decrypt(data[x],secretKey[secretKey.length-(1+x)])
+async function decryptData(data, keys) {
+  output = []
+  for (var x = 0; x > keys.length; x++) {
+    output += CryptoJS.AES.decrypt(data[x], keys[keys.length-(1+x)]).toString(CryptoJS.enc.Utf8)
   }
+    
   return output
 }
 
