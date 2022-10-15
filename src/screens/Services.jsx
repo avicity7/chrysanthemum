@@ -22,11 +22,31 @@ const storage = new Storage({
   },
 });
 
+const decryptData = async (data, secretKey, setDecrypted) => {
+  const apiURL = "http://13.212.100.69:5000";
+  await fetch(apiURL + "/safePublish/decryptData", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      data: data,
+      secretKey: secretKey,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data.decrypted.split('BREAK'));
+    });
+};
+
 const getTransactions = async (
   wallet,
   setData,
+  setDecrypted,
+  userData,
   setModalVisible,
-  modalVisible
+  modalVisible,
 ) => {
   const apiURL = "http://13.212.100.69:5000";
   await fetch(apiURL + "/safePublish/getTransactions", {
@@ -41,16 +61,26 @@ const getTransactions = async (
     .then((response) => response.json())
     .then((data) => {
       setData(data.transactions);
-      console.log("done");
-      storage.getAllDataForKey("secretKey").then((keys) => {
-        console.log(keys);
-        /*
-        for (var x = keys.length; x==0 ;x--){
-            decryptData(userData,keys[x],setDecrypted);
-            records += decrypted;
-        }
-        */
-      });
+      storage
+            .load({
+              key: 'secretKey'
+            })
+            .then(ret => {  
+              decryptData(data.transactions, ret, setDecrypted);
+            })
+            .catch(err => {
+              // any exception including data not found
+              // goes to catch()
+              console.warn(err.message);
+              switch (err.name) {
+                case 'NotFoundError':
+                  // TODO;
+                  break;
+                case 'ExpiredError':
+                  // TODO
+                  break;
+              }
+            });
     });
 };
 
@@ -71,43 +101,36 @@ const sendTriage = async (wallet, setData, setModalVisible, modalVisible) => {
       setData(data.key);
       setModalVisible(!modalVisible);
       storage
-        .getAllDataForKey("secretKey")
-        .then((data) => {
-          let latestID = parseInt(ids[ids.length - 1]);
-
-          storage.save({
-            key: "secretKey",
-            id: latestID + 1,
-            data: data.key,
-            expires: null,
-          });
-        })
-        .catch((err) => {
-          storage.save({
-            key: "secretKey",
-            id: "1",
-            data: data.key,
-            expires: null,
-          });
-        });
-    });
-};
-
-const decryptData = async (data, secretKey, setDecrypted) => {
-  const apiURL = "http://13.212.100.69:5000";
-  await fetch(apiURL + "/safePublish/decryptData", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      data: data,
-      secretKey: secretKey,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data.decryptedData);
+            .load({
+              key: 'secretKey'
+            })
+            .then(ret => {
+              // found data goes to then()
+              ret.push(data.key)
+              storage.save({
+                key: 'secretKey',
+                data: ret,
+                expires: null
+              })
+             console.log(ret)
+            })
+            .catch(err => {
+              // any exception including data not found
+              // goes to catch()
+              console.warn(err.message);
+              switch (err.name) {
+                case 'NotFoundError':
+                  storage.save({
+                    key: 'secretKey',
+                    data: [data.key],
+                    expires: null
+                  })
+                  break;
+                case 'ExpiredError':
+                  // TODO
+                  break;
+              }
+            });
     });
 };
 
@@ -125,18 +148,26 @@ const HealthRecords = () => {
           icon="refresh"
           onPress={() => {
             //Load data
-            /*
-            getTransactions(
-              "0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",
-              setData);
-            */
-            storage.getAllDataForKey("secretKey").then((keys) => {
-              console.log(keys.length);
-              for (var x = keys.length; x >= 0; x--) {
-                console.log(x);
-                decryptData(userData, keys[x], setDecrypted);
-                records += decrypted;
-                console.log(records);
+            storage
+            .load({
+              key: 'secretKey'
+            })
+            .then(ret => {
+              getTransactions(
+                "0x311d4Fc0A08cDCBD86Ebe36EBbbb942CD2572406",
+                setData,setDecrypted,userData);
+            })
+            .catch(err => {
+              // any exception including data not found
+              // goes to catch()
+              console.warn(err.message);
+              switch (err.name) {
+                case 'NotFoundError':
+                  // TODO;
+                  break;
+                case 'ExpiredError':
+                  // TODO
+                  break;
               }
             });
           }}
@@ -276,12 +307,10 @@ const ServicesScreen = ({ navigation }) => {
             onPress={() => {
               setData("");
               sendTriage(
-                "0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8",
+                "0x311d4Fc0A08cDCBD86Ebe36EBbbb942CD2572406",
                 setData,
                 setTriageModalVisible,
                 triageModalVisible,
-                keys,
-                addKey,
                 setModalVisible,
                 modalVisible
               );
