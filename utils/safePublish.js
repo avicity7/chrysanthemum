@@ -64,8 +64,12 @@ function decrypt(data,keys){
 }
 
 async function decryptData(data, keys) {
-  let output = decrypt(data,keys)
-  return await output
+  return new Promise((resolve) => {
+    let output = decrypt(data,keys);
+    output.then(function(result){
+      resolve(result);
+    })
+  })
 }
 
 async function send(data, address) {
