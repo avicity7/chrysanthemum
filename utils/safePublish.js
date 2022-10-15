@@ -92,7 +92,7 @@ async function sendTriage(address) {
   var dd = String(today.getDate()).padStart(2, '0');
   var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   var yyyy = today.getFullYear();
-  const today = mm + '/' + dd + '/' + yyyy;
+  today = mm + '/' + dd + '/' + yyyy;
   return new Promise((resolve) => {
     let encrypted = encryptData(bpm + "^" + temp + "^" + sp02+"^"+today);
     let key = send(encrypted[0], address);
