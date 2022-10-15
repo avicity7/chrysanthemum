@@ -37,7 +37,7 @@ const style = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 12,
-    margin:10
+    margin: 10,
   },
   icon: {
     marginRight: 8,

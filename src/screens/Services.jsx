@@ -4,7 +4,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View, FlatList } from "react-native";
+import {
+  FlatList,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Storage from "react-native-storage";
 import Button from "../components/Button";
@@ -36,15 +43,14 @@ const decryptData = async (data, secretKey, setDecrypted) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      let decryptedData = data.decrypted.split('BREAK');
+      let decryptedData = data.decrypted.split("BREAK");
       decryptedData.pop();
       const mappedDecryptedData = decryptedData.map((dt) => {
-        const [temp,bpm,sp02] =
-          dt.split("^");
+        const [temp, bpm, sp02] = dt.split("^");
         return {
-          temp:temp,
-          bpm:bpm,
-          sp02:sp02
+          temp: temp,
+          bpm: bpm,
+          sp02: sp02,
         };
       });
       console.log(mappedDecryptedData);
@@ -58,7 +64,7 @@ const getTransactions = async (
   setDecrypted,
   userData,
   setModalVisible,
-  modalVisible,
+  modalVisible
 ) => {
   const apiURL = "http://13.212.100.69:5000";
   await fetch(apiURL + "/safePublish/getTransactions", {
@@ -74,25 +80,25 @@ const getTransactions = async (
     .then((data) => {
       setData(data.transactions);
       storage
-            .load({
-              key: 'secretKey'
-            })
-            .then(ret => {  
-              decryptData(data.transactions, ret, setDecrypted);
-            })
-            .catch(err => {
-              // any exception including data not found
-              // goes to catch()
-              console.warn(err.message);
-              switch (err.name) {
-                case 'NotFoundError':
-                  // TODO;
-                  break;
-                case 'ExpiredError':
-                  // TODO
-                  break;
-              }
-            });
+        .load({
+          key: "secretKey",
+        })
+        .then((ret) => {
+          decryptData(data.transactions, ret, setDecrypted);
+        })
+        .catch((err) => {
+          // any exception including data not found
+          // goes to catch()
+          console.warn(err.message);
+          switch (err.name) {
+            case "NotFoundError":
+              // TODO;
+              break;
+            case "ExpiredError":
+              // TODO
+              break;
+          }
+        });
     });
 };
 
@@ -113,36 +119,36 @@ const sendTriage = async (wallet, setData, setModalVisible, modalVisible) => {
       setData(data.key);
       setModalVisible(!modalVisible);
       storage
-            .load({
-              key: 'secretKey'
-            })
-            .then(ret => {
-              // found data goes to then()
-              ret.push(data.key)
+        .load({
+          key: "secretKey",
+        })
+        .then((ret) => {
+          // found data goes to then()
+          ret.push(data.key);
+          storage.save({
+            key: "secretKey",
+            data: ret,
+            expires: null,
+          });
+          console.log(ret);
+        })
+        .catch((err) => {
+          // any exception including data not found
+          // goes to catch()
+          console.warn(err.message);
+          switch (err.name) {
+            case "NotFoundError":
               storage.save({
-                key: 'secretKey',
-                data: ret,
-                expires: null
-              })
-             console.log(ret)
-            })
-            .catch(err => {
-              // any exception including data not found
-              // goes to catch()
-              console.warn(err.message);
-              switch (err.name) {
-                case 'NotFoundError':
-                  storage.save({
-                    key: 'secretKey',
-                    data: [data.key],
-                    expires: null
-                  })
-                  break;
-                case 'ExpiredError':
-                  // TODO
-                  break;
-              }
-            });
+                key: "secretKey",
+                data: [data.key],
+                expires: null,
+              });
+              break;
+            case "ExpiredError":
+              // TODO
+              break;
+          }
+        });
     });
 };
 
@@ -210,27 +216,30 @@ const HealthRecords = () => {
           onPress={() => {
             //Load data
             storage
-            .load({
-              key: 'secretKey'
-            })
-            .then(ret => {
-              getTransactions(
-                "0x9e942960941140aeF9F08308227e5EB8969766F4",
-                setData,setDecrypted,userData);
-            })
-            .catch(err => {
-              // any exception including data not found
-              // goes to catch()
-              console.log(err.message);
-              switch (err.name) {
-                case 'NotFoundError':
-                  // TODO;
-                  break;
-                case 'ExpiredError':
-                  // TODO
-                  break;
-              }
-            });
+              .load({
+                key: "secretKey",
+              })
+              .then((ret) => {
+                getTransactions(
+                  "0x9e942960941140aeF9F08308227e5EB8969766F4",
+                  setData,
+                  setDecrypted,
+                  userData
+                );
+              })
+              .catch((err) => {
+                // any exception including data not found
+                // goes to catch()
+                console.log(err.message);
+                switch (err.name) {
+                  case "NotFoundError":
+                    // TODO;
+                    break;
+                  case "ExpiredError":
+                    // TODO
+                    break;
+                }
+              });
           }}
         />
       </View>
