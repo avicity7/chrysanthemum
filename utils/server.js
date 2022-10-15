@@ -39,13 +39,15 @@ app.post("/safePublish/sendTriage", (req, res) => {
 app.post("/safePublish/decryptData", (req, res) => {
   console.log("decryptData received!");
   const data = req.body.data;
-  const secretKey = req.body.secretKey;
+  const keys = req.body.secretKey;
   res.setHeader("Content-Type", "application/json");
-  let output = decryptData(data, secretKey);
-  output.then(function (result) {
-    console.log(result);
-    res.end(JSON.stringify({ decrypted: result }));
-  });
+  for (var x = 0;x > keys.length;x++){
+    let output = decryptData(data[0+x], keys[keys.length-x]);
+    output.then(function (result) {
+      console.log(result);
+      res.end(JSON.stringify({ decrypted: result }));
+    });
+  }
 });
 
 app.post("/safePublish/getTransactions", async (req, res) => {
