@@ -88,8 +88,13 @@ async function sendTriage(address) {
     "." +
     Math.ceil(generator.random() * (9 - 1) + 1);
   const sp02 = Math.ceil(generator.random() * (100 - 95) + 95) + "%";
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+  today = mm + '/' + dd + '/' + yyyy;
   return new Promise((resolve) => {
-    let encrypted = encryptData(bpm + "^" + temp + "^" + sp02);
+    let encrypted = encryptData(bpm + "^" + temp + "^" + sp02+"^"+today);
     let key = send(encrypted[0], address);
     key.then(function () {
       console.log(encrypted[1] + "safePublish.js");
