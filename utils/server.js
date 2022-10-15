@@ -42,13 +42,15 @@ app.post("/safePublish/decryptData", (req, res) => {
   const data = req.body.data;
   const keys = req.body.secretKey;
   res.setHeader("Content-Type", "application/json");
-  for (var x = 0;x > keys.length;x++){
-    let output = decryptData(data[0+x], keys[keys.length-x]);
-    output.then(function (result) {
-      decrypted += result;
-    });
-  }
-  res.end(JSON.stringify({ decrypted: decrypted }));
+  return new Promise((resolve) => {
+    for (var x = 0;x > keys.length;x++){
+      let output = decryptData(data[0+x], keys[keys.length-x]);
+      output.then(function (result) {
+        decrypted += result;
+      });
+    }
+    resolve(res.end(JSON.stringify({ decrypted: decrypted })))
+  })
 });
 
 app.post("/safePublish/getTransactions", async (req, res) => {
