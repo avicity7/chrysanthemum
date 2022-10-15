@@ -1,75 +1,180 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const {
-  sendTriage,
+const Web3 = require("web3");
+const https = require("https");
+var CryptoJS = require("crypto-js");
+var MersenneTwister = require("mersenne-twister");
+var generator = new MersenneTwister();
+require("dotenv").config();
+
+const abi = [
+  {
+    inputs: [],
+    name: "retrieve",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "dt",
+        type: "string",
+      },
+    ],
+    name: "store",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
+const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+const walletAddress = "0x41C806a5e3e81170c9144C9Ce0334e0297241Ce4";
+const contractAddress = "0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8";
+var secretKey = "";
+var data = "";
+
+function generateSecretKey() {
+  var secretKey = "";
+  for (var x = 0; x < 32; x++) {
+    secretKey += String.fromCharCode(generator.random() * (126 - 33) + 33);
+  }
+  return secretKey;
+}
+
+function encryptData(data) {
+  secretKey = generateSecretKey();
+  data = CryptoJS.AES.encrypt(data, secretKey);
+
+  return [data.toString(), secretKey];
+}
+
+function decrypt(data,key){
+  new Promise(resolve => (
+    resolve(CryptoJS.AES.decrypt(data, key).toString(CryptoJS.enc.Utf8))));
+}
+
+async function decryptData(data, secretKey) {
+  output =[]
+  for (var x = 0;x>secretKey.length;x++) {
+    output += await decrypt(data[x],secretKey[secretKey.length-(1+x)])
+  }
+  return output
+}
+
+async function send(data, address) {
+  var userContract = new web3.eth.Contract(abi, address);
+  web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
+  return await userContract.methods
+    .store(data)
+    .send({ from: walletAddress, gas: 2000000 });
+}
+
+async function sendTriage(address) {
+  const bpm = Math.ceil(generator.random() * (140 - 70) + 70);
+  const temp =
+    Math.floor(generator.random() * (38 - 36) + 36) +
+    "." +
+    Math.ceil(generator.random() * (9 - 1) + 1);
+  const sp02 = Math.ceil(generator.random() * (100 - 95) + 95) + "%";
+  return new Promise((resolve) => {
+    let encrypted = encryptData(bpm + "^" + temp + "^" + sp02);
+    let key = send(encrypted[0], address);
+    key.then(function () {
+      console.log(encrypted[1] + "safePublish.js");
+      resolve(encrypted[1]);
+    });
+  });
+}
+
+async function getDeviceData() {
+  const bpm = Math.ceil(generator.random() * (140 - 70) + 70);
+  const temp =
+    Math.floor(generator.random() * (38 - 36) + 36) +
+    "." +
+    Math.ceil(generator.random() * (9 - 1) + 1);
+  const sp02 = Math.ceil(generator.random() * (100 - 95) + 95) + "%";
+  return bpm + "^" + temp + "^" + sp02;
+}
+
+function removeTransactionHeaders(result) {
+  var temp = "0x";
+  for (var x = 138; x < result.length; x++) {
+    temp += result[x];
+  }
+
+  return temp;
+}
+
+async function getTransactionHistory(wallet) {
+  let url =
+    "https://api-testnet.bscscan.com/api?module=account&action=txlist&address=" +
+    wallet +
+    "&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=YourApiKeyToken";
+  return new Promise((resolve) => {
+    var temp = [];
+    https
+      .get(url, (res) => {
+        let body = "";
+
+        res.on("data", (chunk) => {
+          body += chunk;
+        });
+
+        res.on("end", () => {
+          try {
+            let json = JSON.parse(body);
+            for (var tx = json.result.length - 1; tx > 0; tx--) {
+              temp.push(
+                Web3.utils.toUtf8(
+                  removeTransactionHeaders(json.result[tx].input)
+                )
+              );
+            }
+          } catch (error) {
+            console.error(error.message);
+          }
+
+          resolve(temp);
+        });
+      })
+      .on("error", (error) => {
+        console.error(error.message);
+      });
+  });
+}
+
+module.exports = {
+  send,
+  encryptData,
   getTransactionHistory,
+  removeTransactionHeaders,
+  sendTriage,
   getDeviceData,
   decryptData,
-} = require("./safePublish");
+};
 
-app.use(express.json());
-app.use(cors());
+//Encrypting + Decrypting Data
+/*
+data = encryptData("hey does this keep spaces?")
+console.log(data);
+console.log(secretKey);
+console.log(CryptoJS.AES.decrypt(data,secretKey).toString(CryptoJS.enc.Utf8));
+*/
 
-app.get("/", (req, res) => {
-  res.sendStatus(200).end();
-});
+// Editing user data
+//send("testString4","0xD1B59E30Ce1Cea72A607EBf6141109bce89207E8");
 
-app.get("/getDeviceData", (req, res) => {
-  console.log("getDeviceData received");
-  res.setHeader("Content-Type", "application/json");
-  let key = getDeviceData();
-  key.then(function (result) {
+//Getting data from user/contract
+/*
+str = getTransactionHistory(address);
+
+str.then(function(result) {
     console.log(result);
-    res.end(JSON.stringify({ stats: result }));
-  });
 });
-
-app.post("/safePublish/sendTriage", (req, res) => {
-  console.log("sendTriage received");
-  const userAddress = req.body.userAddress;
-  res.setHeader("Content-Type", "application/json");
-  let key = sendTriage(userAddress);
-  key.then(function (result) {
-    console.log(result);
-    res.end(JSON.stringify({ key: result }));
-  });
-});
-
-app.post("/safePublish/decryptData", (req, res) => {
-  decrypted = []
-  console.log("decryptData received!");
-  const data = req.body.data;
-  const keys = req.body.secretKey;
-  res.setHeader("Content-Type", "application/json");
-  return new Promise((resolve) => {
-    for (var x = 0;x > keys.length;x++){
-      let output = decryptData(data[0+x], keys[keys.length-x]);
-      output.then(function (result) {
-        decrypted += result;
-      });
-    }
-    resolve(res.end(JSON.stringify({ decrypted: decrypted })))
-  })
-});
-
-app.post("/safePublish/getTransactions", async (req, res) => {
-  const userAddress = req.body.userAddress;
-  res.setHeader("Content-Type", "application/json");
-  if (userAddress === undefined) {
-    res.sendStatus(400).end();
-  }
-  try {
-    let transactions = getTransactionHistory(userAddress);
-    transactions.then(function (result) {
-      res.end(JSON.stringify({ transactions: result }));
-    });
-  } catch {
-    res.sendStatus(400).end();
-  }
-});
-
-const port = 5000;
-app.listen(port, () => {
-  console.debug(`Express is running on port ${port}.`);
-});
+*/
