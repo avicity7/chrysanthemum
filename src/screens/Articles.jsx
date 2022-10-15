@@ -63,11 +63,10 @@ const ArticleDetailView = ({ route }) => {
   }
 
   return (
-    // FIXME: Ensure that the ScrollView is not obstructed by the bottom nav bar.
     <SafeAreaView
-      style={[globalStyles.container, { justifyContent: "flex-start" }]}
+      style={[globalStyles.container, {flex:1,marginTop:-45}]}
     >
-      <ScrollView style={{ display: "flex", padding: 16 }}>
+      <ScrollView style={{paddingHorizontal: 16}}>
         <Text
           style={{
             fontFamily: "NotoSerifJPRegular",
@@ -181,7 +180,7 @@ const Stack = createNativeStackNavigator();
 const Articles = () => {
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName="ServicesScreen">
+      <Stack.Navigator initialRouteName="Articles">
         <Stack.Screen
           name="Articles"
           component={ArticlesView}
@@ -190,7 +189,12 @@ const Articles = () => {
         <Stack.Screen
           name="Article"
           component={ArticleDetailView}
-          options={{ headerBackTitle: "", headerTintColor: "#C383F4" }}
+          options={{ headerBackTitle: "", headerTintColor: "#C383F4",headerTitleStyle: {
+              fontFamily: "NotoSerifJPSemiBold",
+              color: "black",
+            },
+            headerTintColor: "#C383F4",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Text, View, FlatList } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Storage from "react-native-storage";
 import Button from "../components/Button";
@@ -36,7 +36,19 @@ const decryptData = async (data, secretKey, setDecrypted) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data.decrypted.split('BREAK'));
+      let decryptedData = data.decrypted.split('BREAK');
+      decryptedData.pop();
+      const mappedDecryptedData = decryptedData.map((dt) => {
+        const [temp,bpm,sp02] =
+          dt.split("^");
+        return {
+          temp:temp,
+          bpm:bpm,
+          sp02:sp02
+        };
+      });
+      console.log(mappedDecryptedData);
+      setDecrypted(mappedDecryptedData);
     });
 };
 
@@ -141,7 +153,56 @@ const HealthRecords = () => {
   return (
     <View style={style.container}>
       <View style={globalStyles.container}>
-        <Text style={{ fontFamily: "NotoSerifJPSemiBold" }}></Text>
+        {Array.isArray(decrypted) ? (
+          <FlatList
+            style={{ width: "100%" }}
+            data={userData}
+            renderItem={({ item }) => (
+              <Pressable
+                style={({ pressed }) => [
+                  pressed
+                    ? globalStyles.containerPressed
+                    : globalStyles.containerUnpressed,
+                  ,
+                  style.item,
+                ]}
+                onPress={() =>
+                  navigation.navigate("Article", { article: item })
+                }
+              >
+                <Text
+                  style={{ fontSize: 18, fontFamily: "NotoSerifJPSemiBold" }}
+                >
+                  {item.topic}
+                </Text>
+                <View
+                  style={{
+                    marginTop: 8,
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text
+                    style={{ flexGrow: 1, fontFamily: "NotoSerifJPRegular" }}
+                  >
+                    {item.name}
+                  </Text>
+                </View>
+              </Pressable>
+            )}
+          />
+        ) : (
+          <Text
+            style={{
+              fontFamily: "NotoSerifJPRegular",
+              fontSize: 16,
+              textAlign: "center",
+            }}
+          >
+            Select the refresh button below to fetch the latest articles.
+          </Text>
+        )}
       </View>
       <View style={style.refresh}>
         <RefreshButton
@@ -154,13 +215,13 @@ const HealthRecords = () => {
             })
             .then(ret => {
               getTransactions(
-                "0x311d4Fc0A08cDCBD86Ebe36EBbbb942CD2572406",
+                "0x9e942960941140aeF9F08308227e5EB8969766F4",
                 setData,setDecrypted,userData);
             })
             .catch(err => {
               // any exception including data not found
               // goes to catch()
-              console.warn(err.message);
+              console.log(err.message);
               switch (err.name) {
                 case 'NotFoundError':
                   // TODO;
@@ -307,7 +368,7 @@ const ServicesScreen = ({ navigation }) => {
             onPress={() => {
               setData("");
               sendTriage(
-                "0x311d4Fc0A08cDCBD86Ebe36EBbbb942CD2572406",
+                "0x9e942960941140aeF9F08308227e5EB8969766F4",
                 setData,
                 setTriageModalVisible,
                 triageModalVisible,
@@ -435,6 +496,12 @@ const style = StyleSheet.create({
   barcodeView: {
     width: 200,
     height: 200,
+  },
+  item: {
+    padding: 16,
+    backgroundColor: "#F9F9F9",
+    marginVertical: 8,
+    borderRadius: 8,
   },
 });
 

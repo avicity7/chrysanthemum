@@ -31,12 +31,13 @@ const Button = ({ customStyle, icon, title, onPress }) => {
 const style = StyleSheet.create({
   container: {
     backgroundColor: "#F9F9F9",
-    paddingVertical: 16,
+    padding: 16,
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 12,
+    margin:10
   },
   icon: {
     marginRight: 8,
