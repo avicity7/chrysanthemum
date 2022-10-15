@@ -58,6 +58,7 @@ async function decryptData(data, keys) {
   output = []
   for (var x = 0; x < keys.length; x++) {
     console.log(x)
+    console.log(keys[keys.length-(1+x)])
     output += CryptoJS.AES.decrypt(data[x], keys[keys.length-(1+x)]).toString(CryptoJS.enc.Utf8)
   }
   return output
