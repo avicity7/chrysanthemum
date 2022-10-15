@@ -54,10 +54,8 @@ function encryptData(data) {
   return [data.toString(), secretKey];
 }
 
-function decryptData(data,secretKey) {
-  console.log(data);
-  console.log(secretKey);
-  console.log(CryptoJS.AES.decrypt(data,secretKey).toString(CryptoJS.enc.Utf8));
+function decryptData(data, secretKey) {
+  return CryptoJS.AES.decrypt(data, secretKey).toString(CryptoJS.enc.Utf8)
 }
 
 async function send(data, address) {
@@ -149,7 +147,7 @@ module.exports = {
   removeTransactionHeaders,
   sendTriage,
   getDeviceData,
-  decryptData
+  decryptData,
 };
 
 //Encrypting + Decrypting Data
